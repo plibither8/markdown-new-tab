@@ -24,7 +24,7 @@ gulp.task('styl', () => {
 
 gulp.task('js', () => {
     return gulp.src('src/js/*.js')
-        .pipe(concat('scripts.js'))
+        .pipe(concat('index.js'))
         .pipe(uglify())
         .pipe(gulp.dest('dist/assets/js'))
 })

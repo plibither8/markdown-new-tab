@@ -1,0 +1,3 @@
+@charset "utf-8";
+::-moz-selection{background:#00f;color:#fff}
+::selection{background:#00f;color:#fff}html,body,:root{width:100%;height:100%;background:#fff;font-family:""}*{padding:0;margin:0;position:relative;box-sizing:border-box;text-rendering:optimizeLegibility}*.flex{display:flex;align-items:center;justify-content:center}*.noselect{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}*.nodisplay{display:none}*.container{width:100%;height:100%;justify-content:flex-start;flex-direction:column}
