@@ -3,7 +3,6 @@ const concat        = require("gulp-concat");
 const gulp          = require("gulp");
 const pug           = require("gulp-pug");
 const stylus        = require("gulp-stylus");
-const uglify        = require("gulp-uglify");
 
 gulp.task('pug', () => {
     return gulp.src('src/pug/index.pug')
@@ -25,7 +24,6 @@ gulp.task('styl', () => {
 gulp.task('js', () => {
     return gulp.src('src/js/*.js')
         .pipe(concat('index.js'))
-        .pipe(uglify())
         .pipe(gulp.dest('dist/assets/js'))
 })
 
