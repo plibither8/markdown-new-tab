@@ -1,4 +1,3 @@
-const autoprefix    = require("gulp-autoprefixer");
 const concat        = require("gulp-concat");
 const gulp          = require("gulp");
 const pug           = require("gulp-pug");
@@ -14,9 +13,6 @@ gulp.task('styl', () => {
     return gulp.src('src/styl/index.styl')
         .pipe(stylus({
             compress: true
-        }))
-        .pipe(autoprefix({
-            cascade: false
         }))
         .pipe(gulp.dest('dist/assets/css'));
 })
