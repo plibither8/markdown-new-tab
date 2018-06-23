@@ -5,12 +5,10 @@
   "main": "index.js",
   "dependencies": {
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
     "gulp-cli": "^2.0.1",
     "gulp-concat": "^2.6.1",
     "gulp-pug": "^3.3.0",
     "gulp-stylus": "^2.7.0",
-    "gulp-uglify": "^3.0.0",
     "gulp-watch": "^4.3.11"
   },
   "devDependencies": {
