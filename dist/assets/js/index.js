@@ -17,6 +17,7 @@ converter.setFlavor('github');
 const edit = () => {
     textarea.classList.remove('nodisplay');
     renderBox.classList.add('nodisplay');
+    textarea.focus();
 };
 
 const save = () => {
@@ -28,7 +29,7 @@ const save = () => {
     localStorage.setItem("rawText", text);
 }
 
-const renderBox = document.querySelector('.text');
+const renderBox = document.querySelector('.markdown-body');
 const textarea = document.querySelector('textarea');
 const rawText = localStorage.getItem("rawText");
 textarea.value = rawText;
@@ -45,3 +46,17 @@ const saveButton = document.querySelector('#save');
 
 editButton.addEventListener('click', edit);
 saveButton.addEventListener('click', save);
+
+document.addEventListener("keydown", (e) => {
+    if (e.keyCode === 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+        e.preventDefault();
+        save();
+    }
+}, false);
+
+document.addEventListener("keydown", (e) => {
+    if (e.keyCode === 69 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+        e.preventDefault();
+        edit();
+    }
+}, false);
