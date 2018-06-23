@@ -1,0 +1,12 @@
+{
+    "name": "Markdown New Tab",
+    "version": "1.0.0",
+    "description": "Markdown-styled 'New Tab'!",
+    "manifest_version": 2,
+    "permissions": [
+        "storage"
+    ],
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    }
+}
