@@ -208,8 +208,10 @@
 }
 
 .markdown-body a {
-    color: #0366d6;
+    color: #8bc34a;
     text-decoration: none;
+    border-bottom: 1px solid;
+    padding-bottom: 3px
 }
 
 .markdown-body a:hover {

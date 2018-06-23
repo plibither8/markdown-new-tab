@@ -1,12 +1,17 @@
 @require "imports/main"
 
-textarea
+.container
+    align-items flex-start
+
+textarea, .markdown-body
     background inherit
     border none
-    height 90vh
+    // border-right 3px solid #111
+    // border-bottom none
+    // border-left 3px solid #111 
+    height 100vh
     max-width 1000px
     width 95%
-    margin 5vh 0 0 0
     padding 5vh
     color white
     font-family "Input Mono"
@@ -14,18 +19,24 @@ textarea
     line-height 1.2em
     outline none
     resize none
+    cursor text
 
-.text
-    background inherit
-    border none
-    height 90vh
-    max-width 1000px
-    width 95%
+.buttons
+
+    cursor pointer
+    flex-direction column
     margin 5vh 0 0 0
-    padding 5vh
-    color white
-    // font-family "Input Mono"
-    font-size 20px
-    line-height 1.2em
-    outline none
-    resize none
+
+    .button
+        display inline
+        opacity 0.3
+        transition 0.3s all
+        padding 10px
+
+        &:hover
+            opacity 1
+
+img
+    cursor pointer
+    height 20px
+    width auto
