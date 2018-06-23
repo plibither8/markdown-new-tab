@@ -1,10 +1,15 @@
 .container.flex
 
-    .buttons
-
-        button#edit edit
-        button#save save
-
     textarea(autofocus).nodisplay
 
-    .text.markdown-body
+    .markdown-body
+
+    .buttons.flex.noselect
+
+        .button#edit
+
+            img(src="/assets/svg/edit.svg")
+
+        .button#save
+
+            img(src="/assets/svg/save.svg")
