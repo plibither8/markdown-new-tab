@@ -14,11 +14,34 @@ const converter = new showdown.Converter({
 
 converter.setFlavor('github');
 
+const edit = () => {
+    textarea.classList.remove('nodisplay');
+    renderBox.classList.add('nodisplay');
+};
+
+const save = () => {
+    textarea.classList.add('nodisplay');
+    renderBox.classList.remove('nodisplay');
+    text = textarea.value;
+    html = converter.makeHtml(text);
+    renderBox.innerHTML = html;
+    localStorage.setItem("rawText", text);
+}
+
 const renderBox = document.querySelector('.text');
 const textarea = document.querySelector('textarea');
+const rawText = localStorage.getItem("rawText");
+textarea.value = rawText;
+save();
 
 textarea.addEventListener('input', () => {
     text = textarea.value;
     html = converter.makeHtml(text);
     renderBox.innerHTML = html;
 })
+
+const editButton = document.querySelector('#edit');
+const saveButton = document.querySelector('#save');
+
+editButton.addEventListener('click', edit);
+saveButton.addEventListener('click', save);
