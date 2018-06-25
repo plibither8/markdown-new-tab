@@ -1,27 +1,52 @@
 @require "imports/main"
 
 .container
+    flex-direction column
+
+section.bar
+    height 40px
+    width 100%
+    background #000
+    color #fff
+    position fixed
+    bottom 0
+    font-size 16px
+    border-top 1px solid white
+
+section.main
+    height 100%
+    width 100%
     align-items flex-start
+    margin-bottom 40px
 
 textarea, .markdown-body
     background inherit
     border none
-    height 100vh
+    height 100%
     max-width 1000px
     width 95%
     padding 5vh
     color white
-    font-family "Input Mono"
+    font-family monospace
     font-size 20px
     line-height 1.2em
     outline none
     resize none
+    overflow-y auto
+
+    &::-webkit-scrollbar
+        width 15px
+        background #000
+
+    &::-webkit-scrollbar-thumb
+        background #000
+        border 1px solid white
 
 .buttons
 
     cursor pointer
     flex-direction column
-    margin 5vh 0 0 0
+    margin 5vh 0 0 2vh
 
     .button
         display inline

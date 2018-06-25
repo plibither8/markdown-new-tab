@@ -1,15 +1,21 @@
 .container.flex
 
-    textarea(autofocus).nodisplay
+    section.bar.flex
 
-    .markdown-body
+        p#time
 
-    .buttons.flex.noselect
+    section.main.flex
 
-        .button#edit
+        textarea(autofocus)
 
-            img(src="/assets/svg/edit.svg")
+        .markdown-body.nodisplay
 
-        .button#save
+        .buttons.flex.noselect
 
-            img(src="/assets/svg/save.svg")
+            .button#edit
+
+                img(src="/assets/svg/edit.svg")
+
+            .button#save
+
+                img(src="/assets/svg/save.svg")
