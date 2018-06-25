@@ -1,4 +1,10 @@
 /**
+ * **********************************************
+ * MARKDOWN RENDER, TOGGLE DISPLAY AND SAVE INPUT
+ * **********************************************
+ */
+
+/**
  * Initiate the markdown renderer
  * with specified options
  *
@@ -124,6 +130,12 @@ document.addEventListener("keydown", (e) => {
 
 
 /**
+ * **************************
+ * BOTTOM BAR FUNCTIONALITIES
+ * **************************
+ */
+
+/**
  * Simple time-display function for the bottom bar
  */
 const timeDisplay = () => {
@@ -152,8 +164,11 @@ timeDisplay();
 
 
 /**
- * Add POWERMODE function to input. Disable shaking (too much of a distraction IMO)
+ * *********
+ * POWERMODE
+ * *********
  */
-POWERMODE.shake = false;
+
+POWERMODE.shake = false; // Disable shaking (too much of a distraction IMO)
 POWERMODE.colorful = true;
-textarea.addEventListener('input', POWERMODE);
+textarea.addEventListener('input', POWERMODE); // Add POWERMODE function to input.
