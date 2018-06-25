@@ -34,6 +34,7 @@ converter.setFlavor('github');
 
 const renderBox = document.querySelector('.markdown-body');
 const textarea = document.querySelector('textarea');
+let rawText = localStorage.getItem("rawText");
 
 /**
  * Toggle between renderBox and textarea
@@ -94,20 +95,25 @@ const save = () => {
     renderBox.innerHTML = html;
     localStorage.setItem("rawText", text);
 
+    if (text !== rawText) {
+        const lastEditDate = new Date();
+        localStorage.setItem("lastEdited", lastEditDate);
+        rawText = text;
+    }
+
 }
 
 /**
  * Get `rawText` from localStorage and populate textarea with it
  */
-const rawText = localStorage.getItem("rawText");
 textarea.value = rawText;
 save();
 
 /**
  * Add event listeners to edit and save buttons
  */
-document.querySelector('#edit').addEventListener('click', edit);
-document.querySelector('#save').addEventListener('click', save);
+document.querySelector('#edit').addEventListener('click', () => { edit(); }, false);
+document.querySelector('#save').addEventListener('click', () => { save(); }, false);
 
 /**
  * Capture keystrokes and perform respective functions:
@@ -127,7 +133,6 @@ document.addEventListener("keydown", (e) => {
         }
     }
 }, false);
-
 
 /**
  * **************************
@@ -151,17 +156,21 @@ const timeDisplay = () => {
         const minute = today.getMinutes() < 10 ? "0" + today.getMinutes() : today.getMinutes();
         const seconds = today.getSeconds() < 10 ? "0" + today.getSeconds() : today.getSeconds();
 
-        const output = day + '/' + month + '/' + year + ' - ' +
-            hour + ':' + minute + ':' + seconds;
+        const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
 
         document.querySelector('#time').innerHTML = output;
 
     }, 1000);
 
 };
-
 timeDisplay();
 
+/**
+ * Last edited: _______
+ */
+setInterval(() => {
+    document.querySelector("#lastEdited").innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem("lastEdited")))}`;
+}, 1000);
 
 /**
  * *********

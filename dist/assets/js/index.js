@@ -35,6 +35,7 @@ converter.setFlavor('github');
 
 var renderBox = document.querySelector('.markdown-body');
 var textarea = document.querySelector('textarea');
+var rawText = localStorage.getItem("rawText");
 
 /**
  * Toggle between renderBox and textarea
@@ -87,20 +88,29 @@ var save = function save() {
 
     renderBox.innerHTML = html;
     localStorage.setItem("rawText", text);
+
+    if (text !== rawText) {
+        var lastEditDate = new Date();
+        localStorage.setItem("lastEdited", lastEditDate);
+        rawText = text;
+    }
 };
 
 /**
  * Get `rawText` from localStorage and populate textarea with it
  */
-var rawText = localStorage.getItem("rawText");
 textarea.value = rawText;
 save();
 
 /**
  * Add event listeners to edit and save buttons
  */
-document.querySelector('#edit').addEventListener('click', edit);
-document.querySelector('#save').addEventListener('click', save);
+document.querySelector('#edit').addEventListener('click', function () {
+    edit();
+}, false);
+document.querySelector('#save').addEventListener('click', function () {
+    save();
+}, false);
 
 /**
  * Capture keystrokes and perform respective functions:
@@ -147,8 +157,14 @@ var timeDisplay = function timeDisplay() {
         document.querySelector('#time').innerHTML = output;
     }, 1000);
 };
-
 timeDisplay();
+
+/**
+ * Last edited: _______
+ */
+setInterval(function () {
+    document.querySelector("#lastEdited").innerHTML = 'Last edited: ' + timeago().format(Date.parse(localStorage.getItem("lastEdited")));
+}, 1000);
 
 /**
  * *********
