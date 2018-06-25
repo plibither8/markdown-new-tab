@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "scripts": {
+    "lint": "eslint ./src/js",
+    "lint:fix": "npm run lint -- --fix"
+  },
   "dependencies": {
     "gulp": "^3.9.1",
     "gulp-cli": "^2.0.1",
@@ -18,9 +22,6 @@
     "gulp-babel": "^7.0.1",
     "gulp-minify": "^3.0.2",
     "gulp-webserver": "^0.9.1"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
