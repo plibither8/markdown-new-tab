@@ -3,8 +3,15 @@
     "ecmaVersion": 2017
   },
   "env": {
+    "browser": true,
+    "commonjs": true,
     "es6": true,
     "node": true
+  },
+  "globals": {
+    "POWERMODE": true,
+    "timeago": true,
+    "showdown": true
   },
   "extends": "eslint:recommended",
   "rules": {
