@@ -34,7 +34,7 @@ converter.setFlavor('github');
 
 const renderBox = document.querySelector('.markdown-body');
 const textarea = document.querySelector('textarea');
-let rawText = localStorage.getItem("rawText");
+let rawText = localStorage.getItem('rawText');
 
 /**
  * Toggle between renderBox and textarea
@@ -52,7 +52,7 @@ const toggleDisplay = (n) => {
         renderBox.classList.remove('nodisplay');
     }
 
-}
+};
 
 /**
  * Move the textarea caret to the start of the
@@ -61,18 +61,18 @@ const toggleDisplay = (n) => {
  */
 const moveCaretToStart = () => {
 
-    if (typeof textarea.selectionStart === "number") {
+    if (typeof textarea.selectionStart === 'number') {
         textarea.selectionStart = textarea.selectionEnd = 0;
     }
 
-    else if (typeof textarea.createTextRange !== "undefined") {
+    else if (typeof textarea.createTextRange !== 'undefined') {
         textarea.focus();
         const range = textarea.createTextRange();
         range.collapse(true);
         range.select();
     }
 
-}
+};
 
 // Main edit function
 const edit = () => {
@@ -80,7 +80,7 @@ const edit = () => {
     toggleDisplay(1);
     moveCaretToStart();
     textarea.focus();
-    textarea.scrollTop = 0
+    textarea.scrollTop = 0;
 
 };
 
@@ -93,15 +93,15 @@ const save = () => {
     const html = converter.makeHtml(text);
 
     renderBox.innerHTML = html;
-    localStorage.setItem("rawText", text);
+    localStorage.setItem('rawText', text);
 
     if (text !== rawText) {
         const lastEditDate = new Date();
-        localStorage.setItem("lastEdited", lastEditDate);
+        localStorage.setItem('lastEdited', lastEditDate);
         rawText = text;
     }
 
-}
+};
 
 /**
  * Get `rawText` from localStorage and populate textarea with it
@@ -121,8 +121,8 @@ document.querySelector('#save').addEventListener('click', () => { save(); }, fal
  * Ctrl + S => Save input (`save` function)
  * Ctrl + E => Edit input (`edit` function)
  */
-document.addEventListener("keydown", (e) => {
-    if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
+document.addEventListener('keydown', (e) => {
+    if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
         if (e.keyCode === 83) {
             e.preventDefault();
             save();
@@ -148,13 +148,13 @@ const timeDisplay = () => {
     setInterval(function () {
 
         const today = new Date();
-        const day = today.getDate() < 10 ? "0" + today.getDate() : today.getDate();
-        const month = (today.getMonth() + 1) < 10 ? "0" + (today.getMonth() + 1) : (today.getMonth() + 1);
-        const year = today.getFullYear() < 10 ? "0" + today.getFullYear() : today.getFullYear();
+        const day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
+        const month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
+        const year = today.getFullYear() < 10 ? '0' + today.getFullYear() : today.getFullYear();
 
-        const hour = today.getHours() < 10 ? "0" + today.getHours() : today.getHours();
-        const minute = today.getMinutes() < 10 ? "0" + today.getMinutes() : today.getMinutes();
-        const seconds = today.getSeconds() < 10 ? "0" + today.getSeconds() : today.getSeconds();
+        const hour = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
+        const minute = today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes();
+        const seconds = today.getSeconds() < 10 ? '0' + today.getSeconds() : today.getSeconds();
 
         const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
 
@@ -169,7 +169,7 @@ timeDisplay();
  * Last edited: _______
  */
 setInterval(() => {
-    document.querySelector("#lastEdited").innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem("lastEdited")))}`;
+    document.querySelector('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
 }, 1000);
 
 /**

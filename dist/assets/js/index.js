@@ -35,7 +35,7 @@ converter.setFlavor('github');
 
 var renderBox = document.querySelector('.markdown-body');
 var textarea = document.querySelector('textarea');
-var rawText = localStorage.getItem("rawText");
+var rawText = localStorage.getItem('rawText');
 
 /**
  * Toggle between renderBox and textarea
@@ -59,9 +59,9 @@ var toggleDisplay = function toggleDisplay(n) {
  */
 var moveCaretToStart = function moveCaretToStart() {
 
-    if (typeof textarea.selectionStart === "number") {
+    if (typeof textarea.selectionStart === 'number') {
         textarea.selectionStart = textarea.selectionEnd = 0;
-    } else if (typeof textarea.createTextRange !== "undefined") {
+    } else if (typeof textarea.createTextRange !== 'undefined') {
         textarea.focus();
         var range = textarea.createTextRange();
         range.collapse(true);
@@ -87,11 +87,11 @@ var save = function save() {
     var html = converter.makeHtml(text);
 
     renderBox.innerHTML = html;
-    localStorage.setItem("rawText", text);
+    localStorage.setItem('rawText', text);
 
     if (text !== rawText) {
         var lastEditDate = new Date();
-        localStorage.setItem("lastEdited", lastEditDate);
+        localStorage.setItem('lastEdited', lastEditDate);
         rawText = text;
     }
 };
@@ -118,8 +118,8 @@ document.querySelector('#save').addEventListener('click', function () {
  * Ctrl + S => Save input (`save` function)
  * Ctrl + E => Edit input (`edit` function)
  */
-document.addEventListener("keydown", function (e) {
-    if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
+document.addEventListener('keydown', function (e) {
+    if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
         if (e.keyCode === 83) {
             e.preventDefault();
             save();
@@ -144,13 +144,13 @@ var timeDisplay = function timeDisplay() {
     setInterval(function () {
 
         var today = new Date();
-        var day = today.getDate() < 10 ? "0" + today.getDate() : today.getDate();
-        var month = today.getMonth() + 1 < 10 ? "0" + (today.getMonth() + 1) : today.getMonth() + 1;
-        var year = today.getFullYear() < 10 ? "0" + today.getFullYear() : today.getFullYear();
+        var day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
+        var month = today.getMonth() + 1 < 10 ? '0' + (today.getMonth() + 1) : today.getMonth() + 1;
+        var year = today.getFullYear() < 10 ? '0' + today.getFullYear() : today.getFullYear();
 
-        var hour = today.getHours() < 10 ? "0" + today.getHours() : today.getHours();
-        var minute = today.getMinutes() < 10 ? "0" + today.getMinutes() : today.getMinutes();
-        var seconds = today.getSeconds() < 10 ? "0" + today.getSeconds() : today.getSeconds();
+        var hour = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
+        var minute = today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes();
+        var seconds = today.getSeconds() < 10 ? '0' + today.getSeconds() : today.getSeconds();
 
         var output = day + '/' + month + '/' + year + ' - ' + hour + ':' + minute + ':' + seconds;
 
@@ -163,7 +163,7 @@ timeDisplay();
  * Last edited: _______
  */
 setInterval(function () {
-    document.querySelector("#lastEdited").innerHTML = 'Last edited: ' + timeago().format(Date.parse(localStorage.getItem("lastEdited")));
+    document.querySelector('#lastEdited').innerHTML = 'Last edited: ' + timeago().format(Date.parse(localStorage.getItem('lastEdited')));
 }, 1000);
 
 /**
