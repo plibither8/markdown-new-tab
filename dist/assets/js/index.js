@@ -123,3 +123,7 @@ var timeDisplay = function timeDisplay() {
 };
 
 timeDisplay();
+
+POWERMODE.shake = false;
+POWERMODE.colorful = true;
+textarea.addEventListener('input', POWERMODE);
