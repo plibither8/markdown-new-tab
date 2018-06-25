@@ -1,5 +1,7 @@
+const babel         = require("gulp-babel");
 const concat        = require("gulp-concat");
 const gulp          = require("gulp");
+const minify        = require('gulp-minify');
 const pug           = require("gulp-pug");
 const stylus        = require("gulp-stylus");
 
@@ -19,8 +21,11 @@ gulp.task('styl', () => {
 
 gulp.task('js', () => {
     return gulp.src('src/js/*.js')
-        .pipe(concat('index.js'))
+        .pipe(babel({
+            presets: ['env']
+        }))
         .pipe(gulp.dest('dist/assets/js'))
+
 })
 
 gulp.task('default', ['pug', 'styl', 'js'], () => {
