@@ -26,13 +26,13 @@ const converter = new showdown.Converter({
 converter.setFlavor('github');
 
 
-
-/**
- *
- */
 const renderBox = document.querySelector('.markdown-body');
 const textarea = document.querySelector('textarea');
 
+/**
+ * Toggle between renderBox and textarea
+ * @param n - If n = 1, display renderBox, else display textarea
+ */
 const toggleDisplay = (n) => {
 
     if (n) {
@@ -47,6 +47,11 @@ const toggleDisplay = (n) => {
 
 }
 
+/**
+ * Move the textarea caret to the start of the
+ * line instead of the last line so that it is visible
+ * From https://stackoverflow.com/a/8190890/
+ */
 const moveCaretToStart = () => {
 
     if (typeof textarea.selectionStart === "number") {
@@ -62,6 +67,7 @@ const moveCaretToStart = () => {
 
 }
 
+// Main edit function
 const edit = () => {
 
     toggleDisplay(1);
@@ -71,6 +77,7 @@ const edit = () => {
 
 };
 
+// Main save function
 const save = () => {
 
     toggleDisplay(0);
@@ -83,22 +90,25 @@ const save = () => {
 
 }
 
+/**
+ * Get `rawText` from localStorage and populate textarea with it
+ */
 const rawText = localStorage.getItem("rawText");
 textarea.value = rawText;
 save();
 
-textarea.addEventListener('input', () => {
-    text = textarea.value;
-    html = converter.makeHtml(text);
-    renderBox.innerHTML = html;
-})
+/**
+ * Add event listeners to edit and save buttons
+ */
+document.querySelector('#edit').addEventListener('click', edit);
+document.querySelector('#save').addEventListener('click', save);
 
-const editButton = document.querySelector('#edit');
-const saveButton = document.querySelector('#save');
-
-editButton.addEventListener('click', edit);
-saveButton.addEventListener('click', save);
-
+/**
+ * Capture keystrokes and perform respective functions:
+ * 
+ * Ctrl + S => Save input (`save` function)
+ * Ctrl + E => Edit input (`edit` function)
+ */
 document.addEventListener("keydown", (e) => {
     if (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) {
         if (e.keyCode === 83) {
@@ -113,7 +123,9 @@ document.addEventListener("keydown", (e) => {
 }, false);
 
 
-
+/**
+ * Simple time-display function for the bottom bar
+ */
 const timeDisplay = () => {
 
     setInterval(function () {
@@ -139,6 +151,9 @@ const timeDisplay = () => {
 timeDisplay();
 
 
+/**
+ * Add POWERMODE function to input. Disable shaking (too much of a distraction IMO)
+ */
 POWERMODE.shake = false;
 POWERMODE.colorful = true;
 textarea.addEventListener('input', POWERMODE);
