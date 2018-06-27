@@ -9,6 +9,37 @@
 
 ![Demo GIF](/assets/demo.gif)
 
+# Setup
+
+Since this extension is not available on the Chrome Webstore (it's only $5, I know... :| ), it needs to be manually installed and loaded.
+
+1. Clone this repo:
+
+```sh
+$ git clone https://github.com/plibither8/markdown-new-tab
+```
+2. Open Chrome and go to `chrome://extensions`
+3. Enable 'Developer Mode' by checking the tickbox (on the top of the page).
+4. Click the 'Load Unpacked Extension' button and select the `dist/` folder of the cloned repository.
+5. The extension should be loaded now and the 'New Tab' page should be Markdown New Tab. 🎉
+
+# Usage
+
+You can edit and save the texts either by pressing the buttons on the top right, or by using the shortcuts:
+
+```
+Ctrl + E => Edit
+Ctrl + S => Save
+```
+
+The code makes use of `localStorage()` to save the raw text and the time and date of when the edit has been made.
+
+# To do
+
+* Enable user to change colors/add themes
+* Implement user-defined markdown rendering
+* Other gimmicks to make it less minimalistic (?)
+
 
 # License
 
