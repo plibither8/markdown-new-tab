@@ -21,6 +21,7 @@
     "eslint": "^5.0.0",
     "gulp-babel": "^7.0.1",
     "gulp-minify": "^3.0.2",
+    "gulp-uglify-es": "^1.0.4",
     "gulp-webserver": "^0.9.1"
   },
   "repository": {
