@@ -102,12 +102,15 @@ const save = () => {
 };
 
 const getHistory = () => {
+
     const rawHistory = localStorage.getItem('history');
     const history = rawHistory === null ? [] : JSON.parse(rawHistory);
     return history;
+
 };
 
 const setHistory = () => {
+
     const history = getHistory();
     const id = history.length;
     const historyItem = {
@@ -115,33 +118,27 @@ const setHistory = () => {
         'date': (new Date()),
         'text': rawText
     };
-    history.push(historyItem);
+
+    history.unshift(historyItem);
     localStorage.setItem('history', JSON.stringify(history));
+
 };
 
 const populateHistoryHtml = () => {
-    const itemList = getHistory();
+
     let listElements = '';
-    for (let i = itemList.length - 1; i >= 0; i--) {
-        const item = itemList[i];
+    getHistory().map((item) => {
         const id = +item['id'] + 1;
         const parsedDate = new Date(Date.parse(item['date']));
         const date = (parsedDate.toDateString()).slice(4) + ', ' + (parsedDate.toTimeString()).slice(0,8);
         const text = converter.makeHtml(item['text']);
-        let listElementBuffer = `<div class='item'><div class='label'><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='markdown-body'>${text}</div></div>`;
+        const listElementBuffer = `<div class='item'><div class='label'><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='markdown-body'>${text}</div></div>`;
         listElements += listElementBuffer;
-    }
+    });
+
     document.querySelector('section.history .list').innerHTML = listElements;
+
 };
-
-document.querySelector('#lastEdited').addEventListener('click', () => {
-    populateHistoryHtml();
-    document.querySelector('section.history').classList.remove('nodisplay');
-}, false);
-
-document.querySelector('#close').addEventListener('click', () => {
-    document.querySelector('section.history').classList.add('nodisplay');
-}, false)
 
 /**
  * Get `rawText` from localStorage and populate textarea with it
@@ -150,10 +147,17 @@ textarea.value = rawText;
 save();
 
 /**
- * Add event listeners to edit and save buttons
+ * Add event listeners to edit, save and modal buttons
  */
 document.querySelector('#edit').addEventListener('click', () => { edit(); }, false);
 document.querySelector('#save').addEventListener('click', () => { save(); }, false);
+document.querySelector('#lastEdited').addEventListener('click', () => {
+    populateHistoryHtml();
+    document.querySelector('section.history').classList.remove('nodisplay');
+}, false);
+document.querySelector('#close').addEventListener('click', () => {
+    document.querySelector('section.history').classList.add('nodisplay');
+}, false)
 
 /**
  * Capture keystrokes and perform respective functions:
