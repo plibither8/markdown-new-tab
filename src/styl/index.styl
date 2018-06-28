@@ -19,27 +19,135 @@ section.bar
         border-left 1px solid white    
         line-height 40px
         padding 0 10px
+        cursor pointer
+
+        &:hover::after
+            content 'CLICK TO VIEW REVISION HISTORY'
+            position absolute
+            font-size 12px
+            color #cccccc
+            top -100%
+            left -1px
+            text-align center
+            width 100%
+            border-top 1px solid white
+            border-left 1px solid white
 
 section.main
     height 100%
     width 100%
     align-items flex-start
     margin-bottom 40px
-
-textarea, .markdown-body
-    background inherit
-    border none
-    height 100%
-    max-width 1000px
-    width 95%
-    padding 5vh
-    color white
-    font-family monospace
     font-size 20px
-    line-height 1.2em
-    outline none
-    resize none
-    overflow-y auto
+
+    textarea, .markdown-body
+        background inherit
+        border none
+        height 100%
+        max-width 1000px
+        width 95%
+        padding 5vh
+        color white
+        line-height 1.2em
+        outline none
+        resize none
+        overflow-y auto
+
+        &::-webkit-scrollbar
+            width 15px
+            background #000
+
+        &::-webkit-scrollbar-thumb
+            background #000
+            border 1px solid white
+    
+    textarea
+        font-size 20px
+
+.buttons
+    flex-direction column
+    margin 5vh 0 0 2vh
+
+.button
+    cursor pointer
+    display inline
+    padding 10px
+    
+    img
+        cursor pointer
+        height 20px
+        width auto
+
+    &:hover
+        outline 1px solid white
+
+
+section.history
+    height 80vh
+    max-width 1200px
+    width 95%
+    z-index 2
+    border 1px solid white
+    position absolute
+    background #000000ee
+    top 5vh
+    color white
+    flex-direction column
+    justify-content flex-start
+    padding 20px 30px
+    overflow-y scroll
+
+    .list
+        width 100%
+        padding-bottom 20px
+
+    h1
+        font-size 2.5rem
+
+    #close
+        position fixed
+        align-self flex-end
+        z-index 3
+
+        img
+            z-index 0
+    
+    .item
+        width 100%
+        margin 40px 0 0 0
+
+        .markdown-body
+            padding 20px 20px
+            background #111
+            border-radius 7px
+            max-height 50vh
+            overflow-y scroll
+
+            &::-webkit-scrollbar
+                width 10px
+                background #000
+
+            &::-webkit-scrollbar-thumb
+                background #000
+                border 1px solid white
+
+        p
+            font-size 16px
+
+            &.id
+                color #bbb
+                display inline
+                font-size 20px
+                font-weight bold
+
+            &.date
+                display inline
+                padding-left 20px
+                font-weight bold
+                font-size 23px
+
+        .label
+            padding-bottom 20px
 
     &::-webkit-scrollbar
         width 15px
@@ -48,20 +156,4 @@ textarea, .markdown-body
     &::-webkit-scrollbar-thumb
         background #000
         border 1px solid white
-
-.buttons
-    cursor pointer
-    flex-direction column
-    margin 5vh 0 0 2vh
-
-    .button
-        display inline
-        padding 10px
-
-        &:hover
-            outline 1px solid white
-
-img
-    cursor pointer
-    height 20px
-    width auto
+        border-right none

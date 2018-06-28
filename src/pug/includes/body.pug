@@ -3,7 +3,6 @@
     section.bar.flex.noselect
 
         p#time
-
         p#lastEdited
 
     section.main.flex
@@ -15,9 +14,16 @@
         .buttons.flex.noselect
 
             .button#edit
-
                 img(src="/assets/svg/edit.svg").nodrag
 
             .button#save
-
                 img(src="/assets/svg/save.svg").nodrag
+    
+    section.history.flex.nodisplay
+
+        .button.noselect#close
+            img(src="/assets/svg/close.svg").nodrag
+
+        h1 Revision History
+
+        .list

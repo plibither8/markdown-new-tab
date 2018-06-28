@@ -88,20 +88,60 @@ const edit = () => {
 const save = () => {
 
     toggleDisplay(0);
-
     const text = textarea.value;
     const html = converter.makeHtml(text);
-
     renderBox.innerHTML = html;
-    localStorage.setItem('rawText', text);
 
-    if (text !== rawText) {
-        const lastEditDate = new Date();
-        localStorage.setItem('lastEdited', lastEditDate);
+    if (html !== converter.makeHtml(rawText)) {
+        localStorage.setItem('rawText', text);
+        localStorage.setItem('lastEdited', (new Date()));
         rawText = text;
+        setHistory();
     }
 
 };
+
+const getHistory = () => {
+    const rawHistory = localStorage.getItem('history');
+    const history = rawHistory === null ? [] : JSON.parse(rawHistory);
+    return history;
+};
+
+const setHistory = () => {
+    const history = getHistory();
+    const id = history.length;
+    const historyItem = {
+        'id': id,
+        'date': (new Date()),
+        'text': rawText
+    };
+    history.push(historyItem);
+    localStorage.setItem('history', JSON.stringify(history));
+};
+
+const populateHistoryHtml = () => {
+    const itemList = getHistory();
+    let listElements = '';
+    for (let i = itemList.length - 1; i >= 0; i--) {
+        const item = itemList[i];
+        const id = +item['id'] + 1;
+        const parsedDate = new Date(Date.parse(item['date']));
+        const date = (parsedDate.toDateString()).slice(4) + ', ' + (parsedDate.toTimeString()).slice(0,8);
+        const text = converter.makeHtml(item['text']);
+        let listElementBuffer = `<div class='item'><div class='label'><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='markdown-body'>${text}</div></div>`;
+        listElements += listElementBuffer;
+    }
+    document.querySelector('section.history .list').innerHTML = listElements;
+};
+
+document.querySelector('#lastEdited').addEventListener('click', () => {
+    populateHistoryHtml();
+    document.querySelector('section.history').classList.remove('nodisplay');
+}, false);
+
+document.querySelector('#close').addEventListener('click', () => {
+    document.querySelector('section.history').classList.add('nodisplay');
+}, false)
 
 /**
  * Get `rawText` from localStorage and populate textarea with it
@@ -119,18 +159,25 @@ document.querySelector('#save').addEventListener('click', () => { save(); }, fal
  * Capture keystrokes and perform respective functions:
  * 
  * Ctrl + S => Save input (`save` function)
- * Ctrl + E => Edit input (`edit` function)
+ * Ctrl + X => Edit input (`edit` function)
+ * 
+ * Esc => Close Revision History modal
  */
 document.addEventListener('keydown', (e) => {
+    // Control Key
     if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
         if (e.keyCode === 83) {
             e.preventDefault();
             save();
         }
-        else if (e.keyCode === 69) {
+        else if (e.keyCode === 88) {
             e.preventDefault();
             edit();
         }
+    }
+    // Escape key to close Revision History Modal
+    else if (e.keyCode === 27) {
+        document.querySelector('section.history').classList.add('nodisplay');
     }
 }, false);
 
