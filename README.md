@@ -1,7 +1,7 @@
 # Markdown New Tab
 
 [![Build Status](https://img.shields.io/travis/plibither8/markdown-new-tab/master.svg?style=flat-square)](https://travis-ci.org/plibither8/markdown-new-tab)
-[![Licence](https://img.shields.io/badge/License-MIT-yellow.svg&style=flat-square)](LICENSE)
+[![Licence](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [![Made_with_love_in India](https://img.shields.io/badge/Made_with_love_in-India-DC3545.svg)](https://madewithlove.org.in/)
 

@@ -164,13 +164,15 @@ const populateHistoryHtml = () => {
         displayMarkdown(item);
 
         const [deleteButton, viewButton] = item.children[0].children[1].children;
+        
         deleteButton.removeEventListener('click', deleteEventListener);
+        viewButton.removeEventListener('click', viewEventListener);
+
         const deleteEventListener = deleteButton.addEventListener('click', () => {
             history.splice(history.length - index - 1, 1);
             localStorage.setItem('history', JSON.stringify(history));
             populateHistoryHtml();
         });
-        viewButton.removeEventListener('click', viewEventListener);
         const viewEventListener = viewButton.addEventListener('click', () => {
             item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
         });
