@@ -133,7 +133,7 @@ const displayMarkdown = (item) => {
     textarea.classList.add('nodisplay');
     mdBody.innerHTML = converter.makeHtml(text);
 
-}
+};
 
 const displayTextarea = (item) => {
 
@@ -144,7 +144,7 @@ const displayTextarea = (item) => {
     textarea.classList.remove('nodisplay');
     textarea.innerHTML = text;
 
-}
+};
 
 const populateHistoryHtml = () => {
 
@@ -160,15 +160,16 @@ const populateHistoryHtml = () => {
 
     document.querySelector('section.history .list').innerHTML = listElements;
 
-    (() => {
-        const itemList = [...document.querySelectorAll('.item')].reverse().map((item) => {
-            displayMarkdown(item);
-            item.children[0].children[1].removeEventListener('click', viewEventListener);
-            const viewEventListener = item.children[0].children[1].addEventListener('click', () => {
-                item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
-            })
+    [...document.querySelectorAll('.item')].reverse().map((item) => {
+
+        displayMarkdown(item);
+
+        item.children[0].children[1].removeEventListener('click', viewEventListener);
+        const viewEventListener = item.children[0].children[1].addEventListener('click', () => {
+            item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
         });
-    })();
+
+    });
 
 };
 
@@ -189,7 +190,7 @@ document.querySelector('#lastEdited').addEventListener('click', () => {
 }, false);
 document.querySelector('#close').addEventListener('click', () => {
     document.querySelector('section.history').classList.add('nodisplay');
-}, false)
+}, false);
 
 /**
  * Capture keystrokes and perform respective functions:
