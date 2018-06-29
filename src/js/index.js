@@ -124,19 +124,51 @@ const setHistory = () => {
 
 };
 
+const displayMarkdown = (item) => {
+
+    const text = atob(item.getAttribute('data-text'));
+    const mdBody = item.children[1];
+    const textarea = item.children[2];
+    mdBody.classList.remove('nodisplay');
+    textarea.classList.add('nodisplay');
+    mdBody.innerHTML = converter.makeHtml(text);
+
+}
+
+const displayTextarea = (item) => {
+
+    const text = atob(item.getAttribute('data-text'));
+    const mdBody = item.children[1];
+    const textarea = item.children[2];
+    mdBody.classList.add('nodisplay');
+    textarea.classList.remove('nodisplay');
+    textarea.innerHTML = text;
+
+}
+
 const populateHistoryHtml = () => {
 
     let listElements = '';
     getHistory().map((item) => {
-        const id = +item['id'] + 1;
-        const parsedDate = new Date(Date.parse(item['date']));
+        const id = +item.id + 1;
+        const parsedDate = new Date(Date.parse(item.date));
         const date = (parsedDate.toDateString()).slice(4) + ', ' + (parsedDate.toTimeString()).slice(0,8);
-        const text = converter.makeHtml(item['text']);
-        const listElementBuffer = `<div class='item'><div class='label'><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='markdown-body'>${text}</div></div>`;
+        const textBase64 = btoa(item.text);
+        const listElementBuffer = `<div class='item' data-text='${textBase64}'><div class='label flex'><div><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='button'><img src='/assets/svg/view.svg'/></div></div><div class='markdown-body'></div><textarea class='nodisplay' readonly></textarea></div>`;
         listElements += listElementBuffer;
     });
 
     document.querySelector('section.history .list').innerHTML = listElements;
+
+    (() => {
+        const itemList = [...document.querySelectorAll('.item')].reverse().map((item) => {
+            displayMarkdown(item);
+            item.children[0].children[1].removeEventListener('click', viewEventListener);
+            const viewEventListener = item.children[0].children[1].addEventListener('click', () => {
+                item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
+            })
+        });
+    })();
 
 };
 
