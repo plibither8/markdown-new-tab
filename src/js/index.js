@@ -101,6 +101,9 @@ const save = () => {
 
 };
 
+/**
+ * @returns Array of history items
+ */
 const getHistory = () => {
 
     const rawHistory = localStorage.getItem('history');
@@ -109,6 +112,10 @@ const getHistory = () => {
 
 };
 
+/**
+ * Add new history item to history array
+ * and then update `history` item in localStorage
+ */
 const setHistory = () => {
 
     const history = getHistory();
@@ -122,6 +129,10 @@ const setHistory = () => {
 
 };
 
+/**
+ * 
+ * @param {Node} item - History item for which markdown must be rendered
+ */
 const displayMarkdown = (item) => {
 
     const text = atob(item.getAttribute('data-text'));
@@ -133,6 +144,10 @@ const displayMarkdown = (item) => {
 
 };
 
+/**
+ * 
+ * @param {Node} item - History item for which textarea must be populated with rawtext
+ */
 const displayTextarea = (item) => {
 
     const text = atob(item.getAttribute('data-text'));
@@ -144,35 +159,63 @@ const displayTextarea = (item) => {
 
 };
 
+/**
+ * Main revision history function
+ */
 const populateHistoryHtml = () => {
 
     let listElements = '';
     const history = getHistory();
     const length = history.length;
+
     history.map((item, id) => {
         const parsedDate = new Date(Date.parse(item.date));
-        const date = (parsedDate.toDateString()).slice(4) + ', ' + (parsedDate.toTimeString()).slice(0,8);
-        const textBase64 = btoa(item.text);
-        const listElementBuffer = `<div class='item' data-text='${textBase64}'><div class='label flex'><div><p class='id'>#${length - id}</p><p class='date'>${date}</p></div><div><div class='button'><img src='/assets/svg/bin.svg'/></div><div class='button'><img src='/assets/svg/view.svg'/></div></div></div><div class='markdown-body'></div><textarea class='nodisplay' readonly></textarea></div>`;
-        listElements += listElementBuffer;
+        const formattedDate = `${(parsedDate.toDateString()).slice(4)}, ${(parsedDate.toTimeString()).slice(0,8)}`;
+        const textBase64 = btoa(item.text); // Save rawtext as base64
+
+        listElements += 
+            `<div class='item' data-text='${textBase64}'>
+                <div class='label flex'>
+                    <div>
+                        <p class='id'>#${length - id}</p>
+                        <p class='date'>${formattedDate}</p>
+                    </div>
+                    <div class='noselect'>
+                        <div class='button'>
+                            <img class='nodrag' src='/assets/svg/bin.svg'/>
+                        </div>
+                        <div class='button'>
+                            <img class='nodrag' src='/assets/svg/view.svg'/>
+                        </div>
+                    </div>
+                </div>
+                <div class='markdown-body'></div>
+                <textarea class='nodisplay' readonly></textarea>
+            </div>`;
     });
 
     document.querySelector('section.history .list').innerHTML = listElements;
 
+    /**
+     * 1. Reverse order the array of `item`s to get in suitable, rawHistory afhering order
+     * 2. Render each item's rawtext to markdown and display it
+     * 3. Add event listeners to the buttons of the respective elements
+     */
     [...document.querySelectorAll('.item')].reverse().map((item, index) => {
 
         displayMarkdown(item);
 
-        const [deleteButton, viewButton] = item.children[0].children[1].children;
+        const [deleteButton, viewButton] = item.children[0].children[1].children; // Both variable gets mapped to respective elements
         
         deleteButton.removeEventListener('click', deleteEventListener);
         viewButton.removeEventListener('click', viewEventListener);
 
         const deleteEventListener = deleteButton.addEventListener('click', () => {
-            history.splice(history.length - index - 1, 1);
+            history.splice(length - index - 1, 1);
             localStorage.setItem('history', JSON.stringify(history));
-            populateHistoryHtml();
+            populateHistoryHtml(); // Refresh the Revision History modal with updated content
         });
+
         const viewEventListener = viewButton.addEventListener('click', () => {
             item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
         });
@@ -182,10 +225,13 @@ const populateHistoryHtml = () => {
 };
 
 /**
- * Get `rawText` from localStorage and populate textarea with it
+ * 1. Get `rawText` from localStorage and populate textarea with it
+ * 2. Initiate first `save` to render markdown
  */
-textarea.value = rawText;
-save();
+(() => {
+    textarea.value = rawText;
+    save();
+})();
 
 /**
  * Add event listeners to edit, save and modal buttons
