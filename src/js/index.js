@@ -112,9 +112,7 @@ const getHistory = () => {
 const setHistory = () => {
 
     const history = getHistory();
-    const id = history.length;
     const historyItem = {
-        'id': id,
         'date': (new Date()),
         'text': rawText
     };
@@ -149,23 +147,31 @@ const displayTextarea = (item) => {
 const populateHistoryHtml = () => {
 
     let listElements = '';
-    getHistory().map((item) => {
-        const id = +item.id + 1;
+    const history = getHistory();
+    const length = history.length;
+    history.map((item, id) => {
         const parsedDate = new Date(Date.parse(item.date));
         const date = (parsedDate.toDateString()).slice(4) + ', ' + (parsedDate.toTimeString()).slice(0,8);
         const textBase64 = btoa(item.text);
-        const listElementBuffer = `<div class='item' data-text='${textBase64}'><div class='label flex'><div><p class='id'>#${id}</p><p class='date'>${date}</p></div><div class='button'><img src='/assets/svg/view.svg'/></div></div><div class='markdown-body'></div><textarea class='nodisplay' readonly></textarea></div>`;
+        const listElementBuffer = `<div class='item' data-text='${textBase64}'><div class='label flex'><div><p class='id'>#${length - id}</p><p class='date'>${date}</p></div><div><div class='button'><img src='/assets/svg/bin.svg'/></div><div class='button'><img src='/assets/svg/view.svg'/></div></div></div><div class='markdown-body'></div><textarea class='nodisplay' readonly></textarea></div>`;
         listElements += listElementBuffer;
     });
 
     document.querySelector('section.history .list').innerHTML = listElements;
 
-    [...document.querySelectorAll('.item')].reverse().map((item) => {
+    [...document.querySelectorAll('.item')].reverse().map((item, index) => {
 
         displayMarkdown(item);
 
-        item.children[0].children[1].removeEventListener('click', viewEventListener);
-        const viewEventListener = item.children[0].children[1].addEventListener('click', () => {
+        const [deleteButton, viewButton] = item.children[0].children[1].children;
+        deleteButton.removeEventListener('click', deleteEventListener);
+        const deleteEventListener = deleteButton.addEventListener('click', () => {
+            history.splice(history.length - index - 1, 1);
+            localStorage.setItem('history', JSON.stringify(history));
+            populateHistoryHtml();
+        });
+        viewButton.removeEventListener('click', viewEventListener);
+        const viewEventListener = viewButton.addEventListener('click', () => {
             item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
         });
 
