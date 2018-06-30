@@ -138,9 +138,10 @@ const displayMarkdown = (item) => {
     const text = atob(item.getAttribute('data-text'));
     const mdBody = item.children[1];
     const textarea = item.children[2];
+    
+    mdBody.innerHTML = converter.makeHtml(text);
     mdBody.classList.remove('nodisplay');
     textarea.classList.add('nodisplay');
-    mdBody.innerHTML = converter.makeHtml(text);
 
 };
 
@@ -180,7 +181,7 @@ const populateHistoryHtml = () => {
                         <p class='id'>#${length - id}</p>
                         <p class='date'>${formattedDate}</p>
                     </div>
-                    <div class='noselect'>
+                    <div class='noselect flex'>
                         <div class='button'>
                             <img class='nodrag' src='/assets/svg/bin.svg'/>
                         </div>
@@ -201,6 +202,7 @@ const populateHistoryHtml = () => {
      * 2. Render each item's rawtext to markdown and display it
      * 3. Add event listeners to the buttons of the respective elements
      */
+
     [...document.querySelectorAll('.item')].reverse().map((item, index) => {
 
         displayMarkdown(item);
