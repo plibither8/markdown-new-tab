@@ -130,7 +130,7 @@ const setHistory = () => {
 };
 
 /**
- * 
+ *
  * @param {Node} item - History item for which markdown must be rendered
  */
 const displayMarkdown = (item) => {
@@ -145,7 +145,7 @@ const displayMarkdown = (item) => {
 };
 
 /**
- * 
+ *
  * @param {Node} item - History item for which textarea must be populated with rawtext
  */
 const displayTextarea = (item) => {
@@ -197,7 +197,7 @@ const populateHistoryHtml = () => {
     document.querySelector('section.history .list').innerHTML = listElements;
 
     /**
-     * 1. Reverse order the array of `item`s to get in suitable, rawHistory afhering order
+     * 1. Reverse order the array of `item`s to get in suitable, rawHistory adhering order
      * 2. Render each item's rawtext to markdown and display it
      * 3. Add event listeners to the buttons of the respective elements
      */
@@ -206,7 +206,7 @@ const populateHistoryHtml = () => {
         displayMarkdown(item);
 
         const [deleteButton, viewButton] = item.children[0].children[1].children; // Both variable gets mapped to respective elements
-        
+
         deleteButton.removeEventListener('click', deleteEventListener);
         viewButton.removeEventListener('click', viewEventListener);
 
@@ -248,10 +248,10 @@ document.querySelector('#close').addEventListener('click', () => {
 
 /**
  * Capture keystrokes and perform respective functions:
- * 
+ *
  * Ctrl + S => Save input (`save` function)
  * Ctrl + X => Edit input (`edit` function)
- * 
+ *
  * Esc => Close Revision History modal
  */
 document.addEventListener('keydown', (e) => {
