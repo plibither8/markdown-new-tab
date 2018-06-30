@@ -229,7 +229,7 @@ const populateHistoryHtml = () => {
  * 2. Initiate first `save` to render markdown
  */
 (() => {
-    textarea.value = rawText;
+    textarea.value = rawText === null ? `# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>.\n\nCheers!` : rawText;
     save();
 })();
 
