@@ -1,7 +1,6 @@
 {
     "name": "Markdown New Tab",
     "version": "1.0.0",
-    "default_locale": "en",
     "description": "Take down notes 🗒️, save reminders ⏰, paste links 🔗, create checklists ☑️ or tables, all using markdown... directly in your 'New Tab' page!",
     "manifest_version": 2,
     "permissions": [
