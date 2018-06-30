@@ -94,25 +94,44 @@ section.history
     color white
     flex-direction column
     justify-content flex-start
-    padding 20px 30px
-    overflow-y scroll
+
+    .header
+        width 100%
+        display flex
+        padding 20px
+
+        h1
+            font-size 2.5rem
+            flex 1
+            text-align center
+
+        #close
+            cursor pointer
+            padding 10px 
+        
+            img
+                cursor pointer
+                height 20px
+                width auto
+
+            &:hover
+                outline 1px solid white
 
     .list
         width 100%
-        padding-bottom 20px
+        height 100%
+        padding 30px
+        overflow-y scroll
 
-    h1
-        font-size 2.5rem
+        &::-webkit-scrollbar
+            width 15px
+            background #000
 
-    #close
-        position fixed
-        align-self flex-end
-        z-index 1
-        transform translateZ(0)
+        &::-webkit-scrollbar-thumb
+            background #000
+            border 1px solid white
+            border-right none
 
-        img
-            z-index 0
-    
     .item
         width 100%
         margin 40px 0 0 0
@@ -130,6 +149,7 @@ section.history
             font-family monospace
             font-size 16px
             border none
+            margin 0
 
             &::-webkit-scrollbar
                 width 10px
@@ -172,12 +192,3 @@ section.history
         .label
             padding-bottom 20px
             justify-content space-between
-
-    &::-webkit-scrollbar
-        width 15px
-        background #000
-
-    &::-webkit-scrollbar-thumb
-        background #000
-        border 1px solid white
-        border-right none
