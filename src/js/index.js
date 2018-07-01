@@ -31,9 +31,25 @@ const converter = new showdown.Converter({
  */
 converter.setFlavor('github');
 
+/**
+ * Define shorthand function to replace `document.querySelector`
+ * to make it easier to write and understand
+ * @param {Node} el - CSS Selector which needs to be `querySelector`ed
+ */
+const getHtmlElement = (el) => {
+    return document.querySelector(el);
+};
 
-const renderBox = document.querySelector('.markdown-body');
-const textarea = document.querySelector('textarea');
+const addClass = (el, className) => {
+    el.classList.add(className);
+};
+
+const removeClass = (el, className) => {
+    el.classList.remove(className);
+};
+
+const renderBox = getHtmlElement('.markdown-body');
+const textarea = getHtmlElement('textarea');
 let rawText = localStorage.getItem('rawText');
 
 /**
@@ -43,13 +59,13 @@ let rawText = localStorage.getItem('rawText');
 const toggleDisplay = (n) => {
 
     if (n) {
-        textarea.classList.remove('nodisplay');
-        renderBox.classList.add('nodisplay');
+        removeClass(textarea, 'nodisplay');
+        addClass(renderBox, 'nodisplay');
     }
 
     else {
-        textarea.classList.add('nodisplay');
-        renderBox.classList.remove('nodisplay');
+        addClass(textarea, 'nodisplay');
+        removeClass(renderBox, 'nodisplay');
     }
 
 };
@@ -105,11 +121,9 @@ const save = () => {
  * @returns Array of history items
  */
 const getHistory = () => {
-
     const rawHistory = localStorage.getItem('history');
     const history = rawHistory === null ? [] : JSON.parse(rawHistory);
     return history;
-
 };
 
 /**
@@ -117,16 +131,13 @@ const getHistory = () => {
  * and then update `history` item in localStorage
  */
 const setHistory = () => {
-
     const history = getHistory();
     const historyItem = {
         'date': (new Date()),
         'text': rawText
     };
-
     history.unshift(historyItem);
     localStorage.setItem('history', JSON.stringify(history));
-
 };
 
 /**
@@ -140,8 +151,8 @@ const displayMarkdown = (item) => {
     const textarea = item.children[2];
     
     mdBody.innerHTML = converter.makeHtml(text);
-    mdBody.classList.remove('nodisplay');
-    textarea.classList.add('nodisplay');
+    removeClass(mdBody, 'nodisplay');
+    addClass(textarea, 'nodisplay');
 
 };
 
@@ -154,8 +165,8 @@ const displayTextarea = (item) => {
     const text = atob(item.getAttribute('data-text'));
     const mdBody = item.children[1];
     const textarea = item.children[2];
-    mdBody.classList.add('nodisplay');
-    textarea.classList.remove('nodisplay');
+    addClass(mdBody, 'nodisplay');
+    removeClass(textarea, 'nodisplay');
     textarea.innerHTML = text;
 
 };
@@ -195,7 +206,7 @@ const populateHistoryHtml = () => {
             </div>`;
     });
 
-    document.querySelector('section.history .list').innerHTML = listElements;
+    getHtmlElement('section.history .list').innerHTML = listElements;
 
     /**
      * 1. Reverse order the array of `item`s to get in suitable, rawHistory adhering order
@@ -226,6 +237,33 @@ const populateHistoryHtml = () => {
 
 };
 
+// Open revision history modal
+let sectionMainEventListener;
+const openModal = () => {
+
+    populateHistoryHtml();
+
+    removeClass(getHtmlElement('section.history'), 'nodisplay');
+    getHtmlElement('section.main').style.filter = 'blur(3px)';
+
+    // Add eventListener to section.main to enable closing modal by clicking outside the modal
+    if (sectionMainEventListener === undefined) {
+        sectionMainEventListener = getHtmlElement('section.main').addEventListener('click', () => {
+            closeModal();
+        });
+    }
+
+};
+
+// Close revision history modal
+const closeModal = () => {
+    addClass(getHtmlElement('section.history'), 'nodisplay');
+    getHtmlElement('section.main').style.filter = 'blur(0px)';
+
+    // Remove eventListener once the modal has been closed
+    getHtmlElement('section.main').removeEventListener('click', sectionMainEventListener);
+};
+
 /**
  * 1. Get `rawText` from localStorage and populate textarea with it
  * 2. Initiate first `save` to render markdown
@@ -238,15 +276,10 @@ const populateHistoryHtml = () => {
 /**
  * Add event listeners to edit, save and modal buttons
  */
-document.querySelector('#edit').addEventListener('click', () => { edit(); }, false);
-document.querySelector('#save').addEventListener('click', () => { save(); }, false);
-document.querySelector('#lastEdited').addEventListener('click', () => {
-    populateHistoryHtml();
-    document.querySelector('section.history').classList.remove('nodisplay');
-}, false);
-document.querySelector('#close').addEventListener('click', () => {
-    document.querySelector('section.history').classList.add('nodisplay');
-}, false);
+getHtmlElement      ('#edit').addEventListener('click', () => { edit();       }, false);
+getHtmlElement      ('#save').addEventListener('click', () => { save();       }, false);
+getHtmlElement     ('#close').addEventListener('click', () => { closeModal(); }, false);
+getHtmlElement('#lastEdited').addEventListener('click', () => { openModal();  }, false);
 
 /**
  * Capture keystrokes and perform respective functions:
@@ -270,7 +303,7 @@ document.addEventListener('keydown', (e) => {
     }
     // Escape key to close Revision History Modal
     else if (e.keyCode === 27) {
-        document.querySelector('section.history').classList.add('nodisplay');
+        addClass(getHtmlElement('section.history'), 'nodisplay');
     }
 }, false);
 
@@ -288,17 +321,17 @@ const timeDisplay = () => {
     setInterval(function () {
 
         const today = new Date();
+
         const day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
         const month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
         const year = today.getFullYear() < 10 ? '0' + today.getFullYear() : today.getFullYear();
-
         const hour = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
         const minute = today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes();
         const seconds = today.getSeconds() < 10 ? '0' + today.getSeconds() : today.getSeconds();
 
         const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
 
-        document.querySelector('#time').innerHTML = output;
+        getHtmlElement('#time').innerHTML = output;
 
     }, 1000);
 
@@ -309,7 +342,7 @@ timeDisplay();
  * Last edited: _______
  */
 setInterval(() => {
-    document.querySelector('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
+    getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
 }, 1000);
 
 /**
