@@ -11,8 +11,15 @@
 
 <a href='https://chrome.google.com/webstore/detail/shufflepaper/demppioeofcekpjcnlkmdjbabifjnokj?utm_campaign=PartBadge'><img alt='Get it on the Chrome Webstore' src='https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png' height="58px"/></a>
 
-
 ![Demo GIF](/assets/demo.gif)
+
+# About
+
+Markdown New Tab allows you to take down important notes, thoughts or anything else you need to jot down or paste quickly, directly into your New Tab page... via the markdown syntax!
+
+Markdown will allow you to easily create headings, subheadings, links, styled texts, checkboxes, tables, lists, images and much more... just by a simple syntax. To get the hang of it, check this [brilliant cheat sheat](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+
+Markdown New Tab is complete with the ability to store revisions of the markdown content you made, so if you ever need to look back at previous versions of your content, check the revision history!  
 
 # Development
 
