@@ -1,17 +1,20 @@
 # Markdown New Tab
 
 [![Build Status](https://img.shields.io/travis/plibither8/markdown-new-tab/master.svg?style=flat-square)](https://travis-ci.org/plibither8/markdown-new-tab)
+[![Chrome Webstore Users](https://img.shields.io/chrome-web-store/v/demppioeofcekpjcnlkmdjbabifjnokj.svg)](https://chrome.google.com/webstore/detail/markdown-new-tab/demppioeofcekpjcnlkmdjbabifjnokj)
+[![Chrome Webstore Users](https://img.shields.io/chrome-web-store/users/demppioeofcekpjcnlkmdjbabifjnokj.svg)](https://chrome.google.com/webstore/detail/markdown-new-tab/demppioeofcekpjcnlkmdjbabifjnokj)
 [![Licence](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [![Made_with_love_in India](https://img.shields.io/badge/Made_with_love_in-India-DC3545.svg)](https://madewithlove.org.in/)
 
 > Take down notes 🗒️, save reminders ⏰, paste links 🔗, create checklists ☑️ or tables, all using markdown... directly in your 'New Tab' page! Markdown New Tab is a replacement for the default 'New Tab' page on Google Chrome 🆕 🎉.
 
+<a href='https://chrome.google.com/webstore/detail/shufflepaper/demppioeofcekpjcnlkmdjbabifjnokj?utm_campaign=PartBadge'><img alt='Get it on the Chrome Webstore' src='https://developer.chrome.com/webstore/images/ChromeWebStore_BadgeWBorder_v2_206x58.png' height="58px"/></a>
+
+
 ![Demo GIF](/assets/demo.gif)
 
-# Setup
-
-Since this extension is not available on the Chrome Webstore (it's only $5, I know... :| ), it needs to be manually installed and loaded.
+# Development
 
 1. Clone this repo:
 
