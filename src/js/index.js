@@ -1,56 +1,45 @@
 /**
- * **********************************************
- * MARKDOWN RENDER, TOGGLE DISPLAY AND SAVE INPUT
- * **********************************************
+ * Define helper functions
  */
-
-/**
- * Initiate the markdown renderer
- * with specified options
- *
- * TODO: Allow user to manually config
- * these options
- */
-const converter = new showdown.Converter({
-    'simplifiedAutoLink': true,
-    'excludeTrailingPunctuationFromURLs': true,
-    'strikethrough': true,
-    'tables': true,
-    'tasklist': true,
-    'ghCodeBlocks': true,
-    'smoothLivePreview': true,
-    'smartIndentationFix': true,
-    'simpleLineBreaks': true,
-    'openLinksInNewWindow': true,
-    'emoji': true
-});
-
-/**
- * GitHub-styled markdown to allow
- * tasklists, tables, simple-line-breaks etc.
- */
-converter.setFlavor('github');
 
 /**
  * Define shorthand function to replace `document.querySelector`
  * to make it easier to write and understand
- * @param {Node} el - CSS Selector which needs to be `querySelector`ed
+ * @param {Node} el - CSS selector element which needs to be `querySelector`ed
+ * @returns qureied element
  */
 const getHtmlElement = (el) => {
     return document.querySelector(el);
 };
 
+/**
+ * Define shorthand function to replace `element.classList.add`
+ * @param {Node} el - CSS selector element whose class needs to be modified
+ * @param {String} className - class name that needs to be appended to classlist
+ */
 const addClass = (el, className) => {
     el.classList.add(className);
 };
 
+/**
+ * Define shorthand function to replace `element.classList.remove`
+ * @param {Node} el - CSS selector element whose class needs to be modified
+ * @param {String} className - class name that needs to be removed from classlist
+ */
 const removeClass = (el, className) => {
     el.classList.remove(className);
 };
 
+/**
+ * Declare global variables
+ */
 const renderBox = getHtmlElement('.markdown-body');
 const textarea = getHtmlElement('textarea');
+const mainSection = getHtmlElement('section.main');
+const historySection = getHtmlElement('section.history');
 let rawText = localStorage.getItem('rawText');
+let sectionMainEventListener; // section.main eventListener (defined in `openModal` function)
+let converter; // Main markdown rendering converter (defined in `initiate` function)
 
 /**
  * Toggle between renderBox and textarea
@@ -149,7 +138,7 @@ const displayMarkdown = (item) => {
     const text = atob(item.getAttribute('data-text'));
     const mdBody = item.children[1];
     const textarea = item.children[2];
-    
+
     mdBody.innerHTML = converter.makeHtml(text);
     removeClass(mdBody, 'nodisplay');
     addClass(textarea, 'nodisplay');
@@ -185,7 +174,7 @@ const populateHistoryHtml = () => {
         const formattedDate = `${(parsedDate.toDateString()).slice(4)}, ${(parsedDate.toTimeString()).slice(0,8)}`;
         const textBase64 = btoa(item.text); // Save rawtext as base64
 
-        listElements += 
+        listElements +=
             `<div class='item' data-text='${textBase64}'>
                 <div class='label flex'>
                     <div>
@@ -213,23 +202,19 @@ const populateHistoryHtml = () => {
      * 2. Render each item's rawtext to markdown and display it
      * 3. Add event listeners to the buttons of the respective elements
      */
-
     [...document.querySelectorAll('.item')].reverse().map((item, index) => {
 
         displayMarkdown(item);
 
-        const [deleteButton, viewButton] = item.children[0].children[1].children; // Both variable gets mapped to respective elements
+        // Both variable gets mapped to respective elements
+        const [deleteButton, viewButton] = item.children[0].children[1].children;
 
-        deleteButton.removeEventListener('click', deleteEventListener);
-        viewButton.removeEventListener('click', viewEventListener);
-
-        const deleteEventListener = deleteButton.addEventListener('click', () => {
+        deleteButton.addEventListener('click', () => {
             history.splice(length - index - 1, 1);
             localStorage.setItem('history', JSON.stringify(history));
             populateHistoryHtml(); // Refresh the Revision History modal with updated content
         });
-
-        const viewEventListener = viewButton.addEventListener('click', () => {
+        viewButton.addEventListener('click', () => {
             item.children[2].classList.contains('nodisplay') ? displayTextarea(item) : displayMarkdown(item);
         });
 
@@ -238,88 +223,80 @@ const populateHistoryHtml = () => {
 };
 
 // Open revision history modal
-let sectionMainEventListener;
 const openModal = () => {
 
     populateHistoryHtml();
 
-    removeClass(getHtmlElement('section.history'), 'nodisplay');
-    getHtmlElement('section.main').style.filter = 'blur(3px)';
+    removeClass(historySection, 'nodisplay');
+    mainSection.style.filter = 'blur(3px)';
 
     // Add eventListener to section.main to enable closing modal by clicking outside the modal
     if (sectionMainEventListener === undefined) {
-        sectionMainEventListener = getHtmlElement('section.main').addEventListener('click', () => {
-            closeModal();
-        });
+        sectionMainEventListener = mainSection.addEventListener('click', closeModal, false);
     }
 
 };
 
 // Close revision history modal
 const closeModal = () => {
-    addClass(getHtmlElement('section.history'), 'nodisplay');
-    getHtmlElement('section.main').style.filter = 'blur(0px)';
+    addClass(historySection, 'nodisplay');
+    mainSection.style.filter = 'blur(0px)';
 
     // Remove eventListener once the modal has been closed
-    getHtmlElement('section.main').removeEventListener('click', sectionMainEventListener);
+    mainSection.removeEventListener('click', closeModal, false);
 };
 
 /**
- * 1. Get `rawText` from localStorage and populate textarea with it
- * 2. Initiate first `save` to render markdown
+ * Drag the revision modal with the header as the handle
+ * Code borrowed and modified to es6 standards from:
+ * https://www.w3schools.com/howto/howto_js_draggable.asp
  */
-(() => {
-    textarea.value = rawText === null ? '# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>.\n\nCheers!' : rawText;
-    save();
-})();
+const dragModal = () => {
+    let pos1 = 0,
+        pos2 = 0,
+        pos3 = 0,
+        pos4 = 0;
 
-/**
- * Add event listeners to edit, save and modal buttons
- */
-getHtmlElement      ('#edit').addEventListener('click', () => { edit();       }, false);
-getHtmlElement      ('#save').addEventListener('click', () => { save();       }, false);
-getHtmlElement     ('#close').addEventListener('click', () => { closeModal(); }, false);
-getHtmlElement('#lastEdited').addEventListener('click', () => { openModal();  }, false);
+    const elementDrag = (e) => {
+        e = e || window.event;
+        e.preventDefault();
+        
+        // Calculate new cursor position
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
 
-/**
- * Capture keystrokes and perform respective functions:
- *
- * Ctrl + S => Save input (`save` function)
- * Ctrl + X => Edit input (`edit` function)
- *
- * Esc => Close Revision History modal
- */
-document.addEventListener('keydown', (e) => {
-    // Control Key
-    if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
-        if (e.keyCode === 83) {
-            e.preventDefault();
-            save();
-        }
-        else if (e.keyCode === 88) {
-            e.preventDefault();
-            edit();
-        }
-    }
-    // Escape key to close Revision History Modal
-    else if (e.keyCode === 27) {
-        addClass(getHtmlElement('section.history'), 'nodisplay');
-    }
-}, false);
+        // Set element's new position
+        historySection.style.top = (historySection.offsetTop - pos2) + 'px';
+        historySection.style.left = (historySection.offsetLeft - pos1) + 'px';
+    };
 
-/**
- * **************************
- * BOTTOM BAR FUNCTIONALITIES
- * **************************
- */
+    const closeDragElement = () => {
+        // Stop moving when mouse button is released
+        document.removeEventListener('mouseup', closeDragElement, false);
+        document.removeEventListener('mousemove', elementDrag, false);
+    };
+
+    const dragMouseDown = (e) =>{
+        e = e || window.event;
+        e.preventDefault();
+        // Get mouse cursor position at startup
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.addEventListener('mouseup', closeDragElement, false);
+        document.addEventListener('mousemove', elementDrag, false);
+    };
+
+    getHtmlElement('section.history .header').addEventListener('mousedown', dragMouseDown, false);
+
+};
 
 /**
  * Simple time-display function for the bottom bar
  */
 const timeDisplay = () => {
-
-    setInterval(function () {
-
+    setInterval(() => {
         const today = new Date();
 
         const day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
@@ -334,23 +311,114 @@ const timeDisplay = () => {
         getHtmlElement('#time').innerHTML = output;
 
     }, 1000);
+};
+
+/**
+ * Main initiator function
+ */
+const initiate = () => {
+
+    /**
+     * Initiate the markdown renderer
+     * with specified options
+     *
+     * TODO: Allow user to manually config
+     * these options
+     */
+    converter = new showdown.Converter({
+        'simplifiedAutoLink': true,
+        'excludeTrailingPunctuationFromURLs': true,
+        'strikethrough': true,
+        'tables': true,
+        'tasklist': true,
+        'ghCodeBlocks': true,
+        'smoothLivePreview': true,
+        'smartIndentationFix': true,
+        'simpleLineBreaks': true,
+        'openLinksInNewWindow': true,
+        'emoji': true
+    });
+
+    /**
+     * GitHub-styled markdown to allow
+     * tasklists, tables, simple-line-breaks etc.
+     */
+    converter.setFlavor('github');
+
+    /**
+     * 1. Get `rawText` from localStorage and populate textarea with it
+     * 2. Initiate first `save` to render markdown
+     */
+    textarea.value = rawText === null ? '# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>.\n\nCheers!' : rawText;
+    save();
+
+    // Enable modal dragging
+    dragModal();
+
+    // Initiate time display in bottom bar
+    timeDisplay();
+
+    /**
+     * Last edited: _______
+     */
+    setInterval(() => {
+        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
+    }, 1000);
+
+    /**
+     * Configure POWERMODE
+     */
+    POWERMODE.shake = false; // Disable shaking (too much of a distraction IMO)
+    POWERMODE.colorful = true;
+
+    /**
+     * ***************
+     * EVENT LISTENERS
+     * ***************
+     */
+
+    /**
+     * Add event listeners to edit, save and modal buttons
+     */
+    getHtmlElement('#edit').addEventListener('click', () => {edit();}, false);
+    getHtmlElement('#save').addEventListener('click', () => {save();}, false);
+    getHtmlElement('#close').addEventListener('click', () => {closeModal();}, false);
+    getHtmlElement('#lastEdited').addEventListener('click', () => {openModal();}, false);
+
+    /**
+     * Capture keystrokes and perform respective functions:
+     *
+     * Ctrl + S => Save input (`save` function)
+     * Ctrl + X => Edit input (`edit` function)
+     *
+     * Esc => Close Revision History modal
+     */
+    document.addEventListener('keydown', (e) => {
+        // Control Key
+        if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
+            if (e.keyCode === 83) {
+                e.preventDefault();
+                save();
+            }
+            else if (e.keyCode === 88) {
+                e.preventDefault();
+                edit();
+            }
+        }
+        // Escape key to close Revision History Modal
+        else if (e.keyCode === 27) {
+            addClass(historySection, 'nodisplay');
+        }
+    }, false);
+
+    // Add POWERMODE function on input of textarea
+    textarea.addEventListener('input', POWERMODE);
 
 };
-timeDisplay();
 
 /**
- * Last edited: _______
+ * INITIATE!!!
  */
-setInterval(() => {
-    getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
-}, 1000);
-
-/**
- * *********
- * POWERMODE
- * *********
- */
-
-POWERMODE.shake = false; // Disable shaking (too much of a distraction IMO)
-POWERMODE.colorful = true;
-textarea.addEventListener('input', POWERMODE); // Add POWERMODE function to input.
+(() => {
+    initiate();
+})();
