@@ -13,15 +13,15 @@
 
 ![Demo GIF](/assets/demo.gif)
 
-# About
+## About
 
-Markdown New Tab allows you to take down important notes, thoughts or anything else you need to jot down or paste quickly, directly into your New Tab page... via the markdown syntax!
+Markdown New Tab allows you to take down important notes, thoughts or anything else you need to jot down or paste quickly, directly into your New Tab page... via the markdown syntax.
 
 Markdown will allow you to easily create headings, subheadings, links, styled texts, checkboxes, tables, lists, images and much more... just by a simple syntax. To get the hang of it, check this [brilliant cheat sheat](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 
 Markdown New Tab is complete with the ability to store revisions of the markdown content you made, so if you ever need to look back at previous versions of your content, check the revision history!  
 
-# Development
+## Development
 
 1. Clone this repo:
 
@@ -33,20 +33,20 @@ $ git clone https://github.com/plibither8/markdown-new-tab
 4. Click the 'Load Unpacked Extension' button and select the `dist/` folder of the cloned repository.
 5. The extension should be loaded now and the 'New Tab' page should be Markdown New Tab. 🎉
 
-# Usage
+## Usage
 
 You can edit and save the texts either by pressing the buttons on the top right, or by using the shortcuts <kbd>Ctrl</kbd> + <kbd>X</kbd> to edit the text and <kbd>Ctrl</kbd> + <kbd>S</kbd> to save the text.
 
 The code makes use of `localStorage()` to save the raw text and the time and date of when the edit has been made.
 
-# To do
+## To do
 
 * Enable user to change colors/add themes
 * Implement user-defined markdown rendering
 * Other gimmicks to make it less minimalistic (?)
 
 
-# License
+## License
 
 Copyright (c) Mihir Chaturvedi. All rights reserved.
 
