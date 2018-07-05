@@ -130,12 +130,12 @@ const setHistory = () => {
 };
 
 /**
- *
+ * Display history item markdown
  * @param {Node} item - History item for which markdown must be rendered
  */
 const displayMarkdown = (item) => {
 
-    const text = atob(item.getAttribute('data-text'));
+    const text = decodeURIComponent(escape(atob(item.getAttribute('data-text'))));
     const mdBody = item.children[1];
     const textarea = item.children[2];
 
@@ -146,12 +146,12 @@ const displayMarkdown = (item) => {
 };
 
 /**
- *
+ * Display history item rawttext
  * @param {Node} item - History item for which textarea must be populated with rawtext
  */
 const displayTextarea = (item) => {
 
-    const text = atob(item.getAttribute('data-text'));
+    const text = decodeURIComponent(escape(atob(item.getAttribute('data-text'))));
     const mdBody = item.children[1];
     const textarea = item.children[2];
     addClass(mdBody, 'nodisplay');
@@ -172,7 +172,7 @@ const populateHistoryHtml = () => {
     history.map((item, id) => {
         const parsedDate = new Date(Date.parse(item.date));
         const formattedDate = `${(parsedDate.toDateString()).slice(4)}, ${(parsedDate.toTimeString()).slice(0,8)}`;
-        const textBase64 = btoa(item.text); // Save rawtext as base64
+        const textBase64 = btoa(unescape(encodeURIComponent(item.text))); // Save rawtext as base64
 
         listElements +=
             `<div class='item' data-text='${textBase64}'>
