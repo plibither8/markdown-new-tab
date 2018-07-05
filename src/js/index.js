@@ -379,10 +379,10 @@ const initiate = () => {
     /**
      * Add event listeners to edit, save and modal buttons
      */
-    getHtmlElement('#edit').addEventListener('click', () => {edit();}, false);
-    getHtmlElement('#save').addEventListener('click', () => {save();}, false);
-    getHtmlElement('#close').addEventListener('click', () => {closeModal();}, false);
-    getHtmlElement('#lastEdited').addEventListener('click', () => {openModal();}, false);
+    getHtmlElement('#edit')      .addEventListener('click', () => { edit();       }, false);
+    getHtmlElement('#save')      .addEventListener('click', () => { save();       }, false);
+    getHtmlElement('#close')     .addEventListener('click', () => { closeModal(); }, false);
+    getHtmlElement('#lastEdited').addEventListener('click', () => { openModal();  }, false);
 
     /**
      * Capture keystrokes and perform respective functions:
