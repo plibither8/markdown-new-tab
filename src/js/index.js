@@ -154,6 +154,7 @@ const displayTextarea = (item) => {
     const text = decodeURIComponent(escape(atob(item.getAttribute('data-text'))));
     const mdBody = item.children[1];
     const textarea = item.children[2];
+
     addClass(mdBody, 'nodisplay');
     removeClass(textarea, 'nodisplay');
     textarea.innerHTML = text;
@@ -224,7 +225,6 @@ const populateHistoryHtml = () => {
 
 // Open revision history modal
 const openModal = () => {
-
     populateHistoryHtml();
 
     removeClass(historySection, 'nodisplay');
@@ -234,7 +234,6 @@ const openModal = () => {
     if (sectionMainEventListener === undefined) {
         sectionMainEventListener = mainSection.addEventListener('click', closeModal, false);
     }
-
 };
 
 // Close revision history modal
@@ -407,7 +406,7 @@ const initiate = () => {
         }
         // Escape key to close Revision History Modal
         else if (e.keyCode === 27) {
-            addClass(historySection, 'nodisplay');
+            closeModal();
         }
     }, false);
 
