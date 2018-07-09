@@ -13,6 +13,7 @@ section.bar
     bottom 0
     font-size 16px
     border-top 1px solid white
+    z-index 4
 
     #lastEdited
         position absolute
@@ -34,6 +35,13 @@ section.bar
             border-top 1px solid white
             border-left 1px solid white
             white-space nowrap
+    
+    .button
+        padding 0
+        height 100%
+        width 40px
+        position absolute
+        left 0
 
 section.main
     height 100%
@@ -41,6 +49,7 @@ section.main
     align-items flex-start
     margin-bottom 40px
     font-size 20px
+    transition 0.1s all linear
 
     textarea, .markdown-body
         background inherit
@@ -50,7 +59,7 @@ section.main
         width 95%
         padding 5vh
         color white
-        line-height 1.2em
+        line-height 1.4em
         outline none
         resize none
         overflow-y auto
@@ -64,8 +73,16 @@ section.main
             border 1px solid white
     
     textarea
-        font-size 20px
-        font-family monospace
+        font-size 18px
+        font-family 'Fira Mono'
+        letter-spacing 0.5px
+
+    &.blur
+        filter blur(3px)
+        user-select none
+    &.noblur
+        filter blur(0px)
+        user-select default
 
 .buttons
     flex-direction column
@@ -84,11 +101,10 @@ section.main
         outline 1px solid white
 
 
-section.history
+section.history, section.settings
     height 80vh
     max-width 1200px
     width 95%
-    z-index 2
     border 1px solid white
     position absolute
     background rgba(0,0,0,0.8)
@@ -103,13 +119,14 @@ section.history
         padding 20px
         cursor move
         cursor -webkit-grab
+        border-bottom 1px solid #333
 
         h1
             font-size 2.5rem
             flex 1
             text-align center
 
-        #close
+        .close
             cursor pointer
             padding 10px 
         
@@ -120,6 +137,14 @@ section.history
 
             &:hover
                 outline 1px solid white
+
+    &.z-index-2
+        z-index 2
+
+    &.z-index-3
+        z-index 3
+
+section.history
 
     .list
         width 100%
@@ -150,7 +175,7 @@ section.history
             resize none
             outline none 
             color white
-            font-family monospace
+            font-family 'Fira Mono'
             font-size 16px
             border none
             margin 0

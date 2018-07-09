@@ -33,13 +33,15 @@ const removeClass = (el, className) => {
 /**
  * Declare global variables
  */
-const renderBox = getHtmlElement('.markdown-body');
-const textarea = getHtmlElement('textarea');
-const mainSection = getHtmlElement('section.main');
-const historySection = getHtmlElement('section.history');
-let rawText = localStorage.getItem('rawText');
-let sectionMainEventListener; // section.main eventListener (defined in `openModal` function)
-let converter; // Main markdown rendering converter (defined in `initiate` function)
+const renderBox                = getHtmlElement('.markdown-body');
+const textarea                 = getHtmlElement('textarea');
+const mainSection              = getHtmlElement('section.main');
+const historySection           = getHtmlElement('section.history');
+const settingsSection          = getHtmlElement('section.settings');
+let rawText                    = localStorage.getItem('rawText');
+let activeModals               = [];  // array of active modals
+let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
+let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
 /**
  * Toggle between renderBox and textarea
@@ -224,25 +226,50 @@ const populateHistoryHtml = () => {
 };
 
 // Open revision history modal
-const openModal = () => {
-    populateHistoryHtml();
+const openModal = (section, func) => {
 
-    removeClass(historySection, 'nodisplay');
-    mainSection.style.filter = 'blur(3px)';
+    func ? func() : null;
+
+    activeModals.indexOf(section) === -1 ? activeModals.push(section) : null;
+
+    if (activeModals.length === 1) {
+        removeClass(section, 'z-index-3');
+        addClass(section, 'z-index-2');
+    }
+
+    else if (activeModals.length === 2) {
+        removeClass(section, 'z-index-2');
+        addClass(section, 'z-index-3');
+    }
+
+    removeClass(section, 'nodisplay');
+    removeClass(mainSection, 'noblur');
+    addClass(mainSection, 'blur');
 
     // Add eventListener to section.main to enable closing modal by clicking outside the modal
     if (sectionMainEventListener === undefined) {
-        sectionMainEventListener = mainSection.addEventListener('click', closeModal, false);
+        sectionMainEventListener = mainSection.addEventListener('click', () => {
+            return closeModal(activeModals);
+        }, false);
     }
 };
 
 // Close revision history modal
-const closeModal = () => {
-    addClass(historySection, 'nodisplay');
-    mainSection.style.filter = 'blur(0px)';
+const closeModal = (section) => {
 
-    // Remove eventListener once the modal has been closed
-    mainSection.removeEventListener('click', closeModal, false);
+    if (section.constructor === Array) {
+        section.map(el => closeModal(el));
+    } else {
+        activeModals.indexOf(section) !== -1 ? activeModals.splice(activeModals.indexOf(section), 1) : null;
+        addClass(section, 'nodisplay');
+    }
+
+
+    if (activeModals.length === 0) {
+        removeClass(mainSection, 'blur');
+        addClass(mainSection, 'noblur');
+    }
+
 };
 
 /**
@@ -250,7 +277,9 @@ const closeModal = () => {
  * Code borrowed and modified to es6 standards from:
  * https://www.w3schools.com/howto/howto_js_draggable.asp
  */
-const dragModal = () => {
+const dragModal = (name) => {
+
+    const el = getHtmlElement(`section.${name}`);
     let pos1 = 0,
         pos2 = 0,
         pos3 = 0,
@@ -267,8 +296,8 @@ const dragModal = () => {
         pos4 = e.clientY;
 
         // Set element's new position
-        historySection.style.top = (historySection.offsetTop - pos2) + 'px';
-        historySection.style.left = (historySection.offsetLeft - pos1) + 'px';
+        el.style.top = (el.offsetTop - pos2) + 'px';
+        el.style.left = (el.offsetLeft - pos1) + 'px';
     };
 
     const closeDragElement = () => {
@@ -287,7 +316,7 @@ const dragModal = () => {
         document.addEventListener('mousemove', elementDrag, false);
     };
 
-    getHtmlElement('section.history .header').addEventListener('mousedown', dragMouseDown, false);
+    getHtmlElement(`section.${name} .header`).addEventListener('mousedown', dragMouseDown, false);
 
 };
 
@@ -295,20 +324,19 @@ const dragModal = () => {
  * Simple time-display function for the bottom bar
  */
 const timeDisplay = () => {
+    const timeEl = getHtmlElement('#time');
     setInterval(() => {
         const today = new Date();
 
-        const day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
-        const month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
-        const year = today.getFullYear() < 10 ? '0' + today.getFullYear() : today.getFullYear();
-        const hour = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
-        const minute = today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes();
-        const seconds = today.getSeconds() < 10 ? '0' + today.getSeconds() : today.getSeconds();
+        const day     = today.getDate()        < 10 ? '0' + today.getDate()        : today.getDate();
+        const month   = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
+        const year    = today.getFullYear()    < 10 ? '0' + today.getFullYear()    : today.getFullYear();
+        const hour    = today.getHours()       < 10 ? '0' + today.getHours()       : today.getHours();
+        const minute  = today.getMinutes()     < 10 ? '0' + today.getMinutes()     : today.getMinutes();
+        const seconds = today.getSeconds()     < 10 ? '0' + today.getSeconds()     : today.getSeconds();
 
         const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
-
-        getHtmlElement('#time').innerHTML = output;
-
+        timeEl.innerHTML = output;
     }, 1000);
 };
 
@@ -348,11 +376,12 @@ const initiate = () => {
      * 1. Get `rawText` from localStorage and populate textarea with it
      * 2. Initiate first `save` to render markdown
      */
-    textarea.value = rawText === null ? '# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd> (or <kbd>Cmd</kbd> + <kbd>X</kbd> on Mac).\n\nTo save the file click the *save* button or press <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>S</kbd> on Mac). \n\nCheers!' : rawText;
+    textarea.value = rawText === null ? `# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>X</kbd>.\n\nTo save the file click the *save* button or press <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>S</kbd>.\n\nCheers!` : rawText;
     save();
 
     // Enable modal dragging
-    dragModal();
+    dragModal('history');
+    dragModal('settings');
 
     // Initiate time display in bottom bar
     timeDisplay();
@@ -379,10 +408,12 @@ const initiate = () => {
     /**
      * Add event listeners to edit, save and modal buttons
      */
-    getHtmlElement('#edit')      .addEventListener('click', () => { edit();       }, false);
-    getHtmlElement('#save')      .addEventListener('click', () => { save();       }, false);
-    getHtmlElement('#close')     .addEventListener('click', () => { closeModal(); }, false);
-    getHtmlElement('#lastEdited').addEventListener('click', () => { openModal();  }, false);
+    getHtmlElement('#edit')         .addEventListener('click', () => { edit();                                         }, false);
+    getHtmlElement('#save')         .addEventListener('click', () => { save();                                         }, false);
+    getHtmlElement('#lastEdited')   .addEventListener('click', () => { openModal(historySection, populateHistoryHtml); }, false);
+    getHtmlElement('#closeHistory') .addEventListener('click', () => { closeModal(historySection);                     }, false);
+    getHtmlElement('#settings')     .addEventListener('click', () => { openModal(settingsSection);                     }, false);
+    getHtmlElement('#closeSettings').addEventListener('click', () => { closeModal(settingsSection);                    }, false);
 
     /**
      * Capture keystrokes and perform respective functions:
@@ -406,7 +437,7 @@ const initiate = () => {
         }
         // Escape key to close Revision History Modal
         else if (e.keyCode === 27) {
-            closeModal();
+            activeModals.length > 0 ? closeModal([...activeModals].pop()) : null;
         }
     }, false);
 

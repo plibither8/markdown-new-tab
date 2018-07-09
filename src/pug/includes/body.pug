@@ -1,8 +1,8 @@
 .container.flex
 
-    section.main.flex
+    section.main.flex.noblur
 
-        textarea(autofocus)
+        textarea(autofocus spellcheck="false")
 
         .markdown-body.nodisplay
 
@@ -20,12 +20,23 @@
 
             h1 Revision History
 
-            .noselect#close
+            .noselect.close#closeHistory
                 img(src="/assets/svg/close.svg").nodrag
 
         .list
 
+    section.settings.flex.nodisplay
+
+        .header
+
+            h1 Settings
+
+            .noselect.close#closeSettings
+                img(src="/assets/svg/close.svg").nodrag
+
     section.bar.flex.noselect
 
+        .button.flex#settings
+            img(src="/assets/svg/settings.svg").nodrag
         p#time
         p#lastEdited
