@@ -259,7 +259,7 @@ const dragModal = () => {
     const elementDrag = (e) => {
         e = e || window.event;
         e.preventDefault();
-        
+
         // Calculate new cursor position
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
@@ -348,7 +348,7 @@ const initiate = () => {
      * 1. Get `rawText` from localStorage and populate textarea with it
      * 2. Initiate first `save` to render markdown
      */
-    textarea.value = rawText === null ? '# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd>.\n\nCheers!' : rawText;
+    textarea.value = rawText === null ? '# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>Ctrl</kbd> + <kbd>X</kbd> (or <kbd>Cmd</kbd> + <kbd>X</kbd> on Mac).\n\nTo save the file click the *save* button or press <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>S</kbd> on Mac). \n\nCheers!' : rawText;
     save();
 
     // Enable modal dragging
@@ -368,7 +368,7 @@ const initiate = () => {
      * Configure POWERMODE
      */
     POWERMODE.shake = false; // Disable shaking (too much of a distraction IMO)
-    POWERMODE.colorful = true;
+    POWERMODE.colorful = false; // Too 'cute'
 
     /**
      * ***************

@@ -35,7 +35,7 @@ $ git clone https://github.com/plibither8/markdown-new-tab
 
 ## Usage
 
-You can edit and save the texts either by pressing the buttons on the top right, or by using the shortcuts <kbd>Ctrl</kbd> + <kbd>X</kbd> to edit the text and <kbd>Ctrl</kbd> + <kbd>S</kbd> to save the text.
+You can edit and save the texts either by pressing the buttons on the top right, or by using the shortcuts <kbd>Ctrl</kbd> + <kbd>X</kbd> (or <kbd>Cmd</kbd> + <kbd>X</kbd> on Mac) to edit the text and <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>S</kbd> on Mac) to save the text.
 
 The code makes use of `localStorage()` to save the raw text and the time and date of when the edit has been made.
 
