@@ -225,18 +225,26 @@ const populateHistoryHtml = () => {
 
 };
 
-// Open revision history modal
+/**
+ * Open modal
+ * @param {Node} section - Modal element which is being opened
+ * @param {Function} func - Function that will be performed if it exists 
+ */
 const openModal = (section, func) => {
 
+    // Mainly for `populateHistoryHtml` function
     func ? func() : null;
 
+    // Add modal to activeModals only if it is not only present in the array (prevent double addition if button is clicked twice)
     activeModals.indexOf(section) === -1 ? activeModals.push(section) : null;
 
+    // 1st modal to be opened
     if (activeModals.length === 1) {
         removeClass(section, 'z-index-3');
         addClass(section, 'z-index-2');
     }
 
+    // 2nd modal to be opened
     else if (activeModals.length === 2) {
         removeClass(section, 'z-index-2');
         addClass(section, 'z-index-3');
@@ -254,17 +262,25 @@ const openModal = (section, func) => {
     }
 };
 
-// Close revision history modal
+/**
+ * Close modal
+ * @param {Node} section - Modal element which is being closed
+ */
 const closeModal = (section) => {
 
+    // If `section` is an Array pass elements of array through `closeModal`
     if (section.constructor === Array) {
         section.map(el => closeModal(el));
-    } else {
+    }
+    
+    // If section is an HTML element
+    else {
+        // Remove modal from activeModals array
         activeModals.indexOf(section) !== -1 ? activeModals.splice(activeModals.indexOf(section), 1) : null;
         addClass(section, 'nodisplay');
     }
 
-
+    // If all modals are closed unblur section.main
     if (activeModals.length === 0) {
         removeClass(mainSection, 'blur');
         addClass(mainSection, 'noblur');
@@ -437,6 +453,7 @@ const initiate = () => {
         }
         // Escape key to close Revision History Modal
         else if (e.keyCode === 27) {
+            // Close each modal one-by-one from the last opened to the first opened
             activeModals.length > 0 ? closeModal([...activeModals].pop()) : null;
         }
     }, false);
