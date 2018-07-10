@@ -13,7 +13,7 @@
 
             .button#save
                 img(src="/assets/svg/save.svg").nodrag
-    
+
     section.history.flex.nodisplay
 
         .header.flex
@@ -33,6 +33,49 @@
 
             .noselect.close#closeSettings
                 img(src="/assets/svg/close.svg").nodrag
+
+        .body
+
+            .item.flex(data-setting='saveHistory')
+
+                .main.flex
+                    label Save Revision History
+                    p
+                        | If disabled, saving of revision history will be paused.
+                        br
+                        | Saved revisions will still be viewable.
+
+                .switch.flex
+                    .box
+
+            .item.flex(data-setting='enablePowerMode')
+
+                .main.flex
+                    label Enable POWER MODE
+                    p When typing, display animated particles thrown out from the cursor
+
+                .switch.flex
+                    .box
+
+            .item.flex(data-setting='PowerModeColor')
+
+                .main.flex
+                    label Colored POWER MODE
+                    p Add colors to particles from POWER MODE
+
+                .switch.flex
+                    .box
+
+
+            .item.flex(data-setting='PowerModeShake')
+
+                .main.flex
+                    label Shake on POWER MODE
+                    p If POWER MODE is enable, entire screen will "shake" when typing
+
+                .switch.flex
+                    .box
+
 
     section.bar.flex.noselect
 

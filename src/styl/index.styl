@@ -222,3 +222,47 @@ section.history
         .label
             padding-bottom 20px
             justify-content space-between
+
+section.settings
+
+    .body
+        height 100%
+        width 100%
+    
+    .item
+        padding 25px 40px
+        border-bottom 1px solid #333
+        cursor pointer
+
+        .main
+            justify-content space-between
+            align-items flex-start
+            flex-direction column
+            flex 1
+
+            label
+                font-size 2em
+                line-height 1
+
+            p
+                font-size 1.3em
+                color #bbb
+                margin-top 10px
+
+        .switch
+            height 30px
+            width 30px
+            border 2px solid white
+            align-items center
+
+            .box
+                height 20px
+                width 20px
+
+        &.on
+            .box
+                background white
+
+        &.off
+            .box
+                background none

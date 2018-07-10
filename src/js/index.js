@@ -40,6 +40,7 @@ const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
 let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
+let settingsEventListener      // section.settings items' eventListener (defined in `settingsControl` function)
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
@@ -136,7 +137,7 @@ const setHistory = () => {
  * @param {Node} item - History item for which markdown must be rendered
  */
 const displayMarkdown = (item) => {
-
+    
     const text = decodeURIComponent(escape(atob(item.getAttribute('data-text'))));
     const mdBody = item.children[1];
     const textarea = item.children[2];
@@ -205,7 +206,7 @@ const populateHistoryHtml = () => {
      * 2. Render each item's rawtext to markdown and display it
      * 3. Add event listeners to the buttons of the respective elements
      */
-    [...document.querySelectorAll('.item')].reverse().map((item, index) => {
+    [...document.querySelectorAll('section.history .item')].reverse().map((item, index) => {
 
         displayMarkdown(item);
 
@@ -223,6 +224,46 @@ const populateHistoryHtml = () => {
 
     });
 
+};
+
+const getSettings = () => {
+    const rawSettings = localStorage.getItem('settings');
+    const settings = rawSettings === null ? null : JSON.parse(rawSettings);
+    return settings;
+};
+
+const setSettings = (key, value) => {
+    let settings = getSettings();
+
+    if (settings === null) {
+        settings = {
+            'saveHistory': true,
+            'enablePowerMode': true,
+            'PowerModeColor': false,
+            'PowerModeShake': false
+        };
+    }
+
+    else {
+        settings[key] = value;
+    }
+
+    localStorage.setItem('settings', JSON.stringify(settings));
+};
+
+const settingsControl = () => {
+    const settings = getSettings();
+    const settingsItems = document.querySelectorAll('section.settings .item');
+    [...settingsItems].map((item) => {
+        const key = item.getAttribute('data-setting');
+        const value = settings[key];
+        removeClass(item, value ? 'off' : 'on');
+        addClass(item, value ? 'on' : 'off');
+        item.onclick = () => {
+            setSettings(key, !value);
+            settingsControl();
+        };
+    });
 };
 
 /**
@@ -255,11 +296,13 @@ const openModal = (section, func) => {
     addClass(mainSection, 'blur');
 
     // Add eventListener to section.main to enable closing modal by clicking outside the modal
-    if (sectionMainEventListener === undefined) {
-        sectionMainEventListener = mainSection.addEventListener('click', () => {
+    if (!sectionMainEventListener) {
+        sectionMainEventListener = true;
+        mainSection.addEventListener('click', () => {
             return closeModal(activeModals);
         }, false);
     }
+
 };
 
 /**
@@ -361,6 +404,9 @@ const timeDisplay = () => {
  */
 const initiate = () => {
 
+    setSettings();
+    settingsControl();
+
     /**
      * Initiate the markdown renderer
      * with specified options
@@ -428,7 +474,7 @@ const initiate = () => {
     getHtmlElement('#save')         .addEventListener('click', () => { save();                                         }, false);
     getHtmlElement('#lastEdited')   .addEventListener('click', () => { openModal(historySection, populateHistoryHtml); }, false);
     getHtmlElement('#closeHistory') .addEventListener('click', () => { closeModal(historySection);                     }, false);
-    getHtmlElement('#settings')     .addEventListener('click', () => { openModal(settingsSection);                     }, false);
+    getHtmlElement('#settings')     .addEventListener('click', () => { openModal(settingsSection, settingsControl);    }, false);
     getHtmlElement('#closeSettings').addEventListener('click', () => { closeModal(settingsSection);                    }, false);
 
     /**
