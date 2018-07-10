@@ -40,7 +40,6 @@ const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
 let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
-let settingsEventListener      // section.settings items' eventListener (defined in `settingsControl` function)
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
