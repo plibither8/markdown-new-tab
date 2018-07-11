@@ -40,6 +40,7 @@ const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
 let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
+let saveHistory;               // settings.saveHistory Boolean
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
@@ -103,7 +104,9 @@ const save = () => {
         localStorage.setItem('rawText', text);
         localStorage.setItem('lastEdited', (new Date()));
         rawText = text;
-        setHistory();
+        if (saveHistory) {
+            setHistory();
+        }
     }
 
 };
@@ -263,6 +266,28 @@ const settingsControl = () => {
             settingsControl();
         };
     });
+    applySettings();
+};
+
+const applySettings = () => {
+
+    const settings = getSettings();
+
+    saveHistory = settings.saveHistory;
+
+    if (settings.enablePowerMode) {
+        textarea.addEventListener('input', POWERMODE, false);
+    } else {
+        textarea.removeEventListener('input', POWERMODE, false);
+    }
+
+    /**
+     * Configure POWERMODE
+     */
+
+    POWERMODE.shake = settings.PowerModeShake;
+    POWERMODE.colorful = settings.PowerModeColor;
+
 };
 
 /**
@@ -455,12 +480,6 @@ const initiate = () => {
     }, 1000);
 
     /**
-     * Configure POWERMODE
-     */
-    POWERMODE.shake = false; // Disable shaking (too much of a distraction IMO)
-    POWERMODE.colorful = false; // Too 'cute'
-
-    /**
      * ***************
      * EVENT LISTENERS
      * ***************
@@ -502,9 +521,6 @@ const initiate = () => {
             activeModals.length > 0 ? closeModal([...activeModals].pop()) : null;
         }
     }, false);
-
-    // Add POWERMODE function on input of textarea
-    textarea.addEventListener('input', POWERMODE);
 
 };
 
