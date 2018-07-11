@@ -535,8 +535,11 @@ const initiate = () => {
                 save();
             }
             else if (e.keyCode === 88) {
-                e.preventDefault();
-                edit();
+                // Allow for cutting text when textarea is on display
+                if (textarea.classList.contains('nodisplay')) {
+                    e.preventDefault();
+                    edit();
+                }
             }
         }
         // Escape key to close Revision History Modal
