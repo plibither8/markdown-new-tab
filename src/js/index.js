@@ -139,7 +139,7 @@ const setHistory = () => {
  * @param {Node} item - History item for which markdown must be rendered
  */
 const displayMarkdown = (item) => {
-    
+
     const text = decodeURIComponent(escape(atob(item.getAttribute('data-text'))));
     const mdBody = item.children[1];
     const textarea = item.children[2];
@@ -228,15 +228,27 @@ const populateHistoryHtml = () => {
 
 };
 
+/**
+ * @returns Settings object
+ */
 const getSettings = () => {
     const rawSettings = localStorage.getItem('settings');
     const settings = rawSettings === null ? null : JSON.parse(rawSettings);
     return settings;
 };
 
+/**
+ * Change settings function
+ * @param {String} key - Name of setting to be changed
+ * @param {Boolean} value - Value of setting to be appied
+ */
 const setSettings = (key, value) => {
     let settings = getSettings();
 
+    /**
+     * If settings is null, page is opened for the first time thus
+     * initialise with these defaults
+     */
     if (settings === null) {
         settings = {
             'saveHistory': true,
@@ -253,47 +265,54 @@ const setSettings = (key, value) => {
     localStorage.setItem('settings', JSON.stringify(settings));
 };
 
+/**
+ * Main settings handler function
+ */
 const settingsControl = () => {
     const settings = getSettings();
     const settingsItems = document.querySelectorAll('section.settings .item');
+
     [...settingsItems].map((item) => {
         const key = item.getAttribute('data-setting');
         const value = settings[key];
+
+        // Toggle class on item and change switch style
         removeClass(item, value ? 'off' : 'on');
         addClass(item, value ? 'on' : 'off');
+
+        // Using addEventListener does not work properly for some reason
         item.onclick = () => {
             setSettings(key, !value);
             settingsControl();
         };
+
     });
+
     applySettings();
 };
 
+/**
+ * Finally, apply the settings that have been set
+ */
 const applySettings = () => {
 
     const settings = getSettings();
 
+    // Save History
     saveHistory = settings.saveHistory;
-
-    if (settings.enablePowerMode) {
-        textarea.addEventListener('input', POWERMODE, false);
-    } else {
-        textarea.removeEventListener('input', POWERMODE, false);
-    }
-
-    /**
-     * Configure POWERMODE
-     */
-
-    POWERMODE.shake = settings.PowerModeShake;
+    // Enable POWER MODE
+    settings.enablePowerMode ? textarea.addEventListener('input', POWERMODE, false) : textarea.removeEventListener('input', POWERMODE, false);
+    // Colored POWER MODE
     POWERMODE.colorful = settings.PowerModeColor;
+    // Shake on POWER MODE
+    POWERMODE.shake = settings.PowerModeShake;
 
 };
 
 /**
  * Open modal
  * @param {Node} section - Modal element which is being opened
- * @param {Function} func - Function that will be performed if it exists 
+ * @param {Function} func - Function that will be performed if it exists
  */
 const openModal = (section, func) => {
 
@@ -339,7 +358,7 @@ const closeModal = (section) => {
     if (section.constructor === Array) {
         section.map(el => closeModal(el));
     }
-    
+
     // If section is an HTML element
     else {
         // Remove modal from activeModals array
@@ -359,6 +378,8 @@ const closeModal = (section) => {
  * Drag the revision modal with the header as the handle
  * Code borrowed and modified to es6 standards from:
  * https://www.w3schools.com/howto/howto_js_draggable.asp
+ * 
+ * @param {String} name - name of modal to add draggability to
  */
 const dragModal = (name) => {
 
@@ -428,6 +449,9 @@ const timeDisplay = () => {
  */
 const initiate = () => {
 
+    /**
+     * First things first: Set and apply settings
+     */
     setSettings();
     settingsControl();
 
