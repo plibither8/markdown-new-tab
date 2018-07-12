@@ -34,10 +34,11 @@ const removeClass = (el, className) => {
  * Define shorthand function to toggle `element.classList.toggle`
  * @param {Node} el - CSS selector element whose class needs to be modified
  * @param {String} className - class name that needs to be removed from classlist
- */
+ 
 const toggleClass = (el, className) => {
     el.classList.toggle(className);
 };
+*/
 
 /**
  * Declare global variables
@@ -681,9 +682,9 @@ const initiate = () => {
     getHtmlElement('#closeHistory')     .addEventListener('click', () => { closeModal(historySection);                     }, false);
     getHtmlElement('#settings')         .addEventListener('click', () => { openModal(settingsSection, settingsControl);    }, false);
     getHtmlElement('#closeSettings')    .addEventListener('click', () => { closeModal(settingsSection);                    }, false);
-    getHtmlElement('#settings-add')     .addEventListener('click', () => { toggleClass(notelistSection, 'nodisplay');      }, false);
+    getHtmlElement('#settings-add')     .addEventListener('click', () => { openModal(notelistSection);                     }, false);
     getHtmlElement('#closeNotesAdd')    .addEventListener('click', () => { closeModal(noteaddSection);                     }, false);
-    getHtmlElement('#closeNotesEdit')    .addEventListener('click',() => { closeModal(noteeditSection);                    }, false);
+    getHtmlElement('#closeNotesEdit')   .addEventListener('click',() =>  { closeModal(noteeditSection);                    }, false);
     getHtmlElement('#note-submit')      .addEventListener('click', () => { addNote();                                      }, false);
     getHtmlElement('#name')             .addEventListener('click', () => { editNoteMetaData();                             }, false);
 
@@ -721,6 +722,8 @@ const initiate = () => {
 
 /* clicking on note name in footer, allows you to edit name of the note or delete it */
 const editNoteMetaData= () => {
+    closeModal(notelistSection); //close note list if open
+    getHtmlElement('#notes-edit-header').innerHTML = 'Edit Note';
     if(lastOpenedNote === 'default') {
         alert('Default Note cannot be modifed!');
     }
@@ -731,7 +734,9 @@ const editNoteMetaData= () => {
         openModal(noteeditSection);
 
         getHtmlElement('#note-name-submit').addEventListener('click', () => {
-            note.name = getHtmlElement('#note-edit-name').value;
+            const name = getHtmlElement('#note-edit-name').value;
+            if(checkForDuplicate(name, noteeditSection, '#notes-edit-header')) { return; }
+            note.name = name;
             const notes = localStorage.getItem('notes');
             if(notes != null) {
                 const notesObj = JSON.parse(notes);
@@ -799,12 +804,15 @@ const populateNotes = () => {
             });
         }
     });
-    getHtmlElement('#notelist-add-note').addEventListener('click', () => { openModal(noteaddSection, hideNoteAddSection);}, false);
+    getHtmlElement('#notelist-add-note').addEventListener('click', () => { 
+        openModal(noteaddSection, hideNoteAddSection);}, false);
 };
 
 /* hide note addSection */
 const hideNoteAddSection = () => {
-    addClass(notelistSection, 'nodisplay'); 
+    closeModal(notelistSection);
+    getHtmlElement('#notes-add-header').innerHTML = 'Add Note';
+    getHtmlElement('#note-add-name').value = '';
 };
 
 /* switches to default note */
@@ -844,6 +852,7 @@ const addNote = () => {
     if(notes === null) { notes = {}; }
     else { notes = JSON.parse(notes); }
     if(name !== null && name.length > 0 ) {
+        if(checkForDuplicate(name, noteaddSection, '#notes-add-header')) { return; }
         const note = {};
         note.name = name;
         note.id = 'note_id_' + (new Date().getTime());
@@ -856,6 +865,44 @@ const addNote = () => {
         switchNote(note, true);
         populateNotes();
     }
+};
+
+/* searches the note object to see if the name is already used 
+ * @param {string} name - name of the note to search
+ * @return {Boolean} if the name is duplicate return true 
+*/
+
+const checkForDuplicate = (name, el = null, headerId = '') => {
+    let notes = localStorage.getItem('notes');
+    if(notes !== null && notes.length > 0) {
+        notes = JSON.parse(notes);
+        for(let i = 0; i < Object.keys(notes).length; i += 1)
+        {
+            const key = Object.keys(notes)[i];
+            const notename = notes[key].name;
+            if(name.toLowerCase().localeCompare(notename.toLowerCase()) == 0) {
+                if(headerId !== '')
+                    getHtmlElement(headerId).innerHTML = '<span style=\'color:red\'>Duplicate Name!!</span>';
+                if(el !== null)
+                    localShake(el, 10);
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+/* copied from PowerMode.Shake, shakes the element sent as input */
+const localShake = (el,  i) => {
+    var intensity = i + 2 * Math.random();
+    var x = intensity * (Math.random() > 0.5 ? -1 : 1);
+    var y = intensity * (Math.random() > 0.5 ? -1 : 1);
+    el.style.marginLeft = x + 'px';
+    el.stylemarginTop = y + 'px';
+    setTimeout(function() {
+        el.style.marginLeft = '';
+        el.style.marginTop = '';
+    }, 75);
 };
 /**
  * INITIATE!!!
