@@ -80,16 +80,23 @@ const toggleDisplay = (n) => {
  * line instead of the last line so that it is visible
  * From https://stackoverflow.com/a/8190890/
  */
-const moveCaretToStart = () => {
+const moveCaretToStart = (selectionEnd = -1, selectionStart = -1) => {
 
     if (typeof textarea.selectionStart === 'number') {
         textarea.selectionStart = textarea.selectionEnd = 0;
+        if(selectionEnd !== -1)
+            textarea.selectionEnd = selectionEnd;
+        if(selectionStart !== -1)
+            textarea.selectionStart = selectionStart;
     }
-
     else if (typeof textarea.createTextRange !== 'undefined') {
         textarea.focus();
         const range = textarea.createTextRange();
         range.collapse(true);
+        if(selectionEnd !== -1)
+            range.moveEnd('character', selectionEnd);
+        if(selectionStart !== -1)
+            range.moveStart('character', selectionStart);
         range.select();
     }
 
@@ -102,6 +109,8 @@ const show = () => {
     const text = textarea.value;
     const html = converter.makeHtml(text);
     renderBox.innerHTML = html;
+    removeClass(getHtmlElement('#edit'), 'nodisplay');
+    addClass(getHtmlElement('#save'), 'nodisplay');
 };
 // Main edit function
 const edit = () => {
@@ -110,7 +119,17 @@ const edit = () => {
     textarea.focus();
 
     if (cursorLastPosition) {
-        textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
+        if(lastOpenedNote === 'default') {
+            const pos = Number(localStorage.getItem('cursorLastPosition'));
+            moveCaretToStart(Number(pos), Number(pos));
+        }
+        else {
+            const note = getNote(lastOpenedNote);
+            if(note !== null && 'cursorLastPosition' in note) {
+                const pos = Number(note.cursorLastPosition);
+                moveCaretToStart(Number(pos), Number(pos));
+            } 
+        }
     }
 
     else {
@@ -127,7 +146,6 @@ const edit = () => {
 // Main save function
 const save = () => {
 
-    localStorage.setItem('cursorLastPosition', textarea.selectionStart);
 
     toggleDisplay(0);
     const text = textarea.value;
@@ -137,6 +155,7 @@ const save = () => {
     if (html !== converter.makeHtml(rawText)) {
         if(lastOpenedNote === 'default') {
             localStorage.setItem('rawText', text);
+            localStorage.setItem('cursorLastPosition', textarea.selectionStart);
             rawText = text;
             if (saveHistory) {
                 localStorage.setItem('lastEdited', (new Date()));
@@ -152,6 +171,7 @@ const save = () => {
                     note.rawText = text;
                     rawText = text;
                     note.lastEdited = new Date();
+                    note.cursorLastPosition = textarea.selectionStart;
                     note.history = [];
                     if(saveHistory) {
                         note.history = updateNoteHistory(note);
@@ -806,7 +826,7 @@ const switchNote = (note, editmode = false) => {
     getHtmlElement('#name').innerHTML = `${note.name}`;
     if(editmode)
         edit();
-    else 
+    else
         show();
     hideNoteAddSection();
     localStorage.setItem('lastOpened', lastOpenedNote);
