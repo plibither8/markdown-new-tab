@@ -585,12 +585,23 @@ const initiate = () => {
     populateNotes();
     let noteName = 'Default';
     getHtmlElement('#name').innerHTML = `${noteName}`;
-    /**
-     * 1. Get `rawText` from localStorage and populate textarea with it
-     * 2. Initiate first `save` to render markdown
-     */
-    textarea.value = rawText === null ? `# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>X</kbd>.\n\nTo save the file click the *save* button or press <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>S</kbd>.\n\nCheers!` : rawText;
-    save();
+
+    let lastOpened = localStorage.getItem("lastOpened");
+    if(lastOpened === null || lastOpened === "default")
+    {
+        /**
+         * 1. Get `rawText` from localStorage and populate textarea with it
+         * 2. Initiate first `save` to render markdown
+         */
+        textarea.value = rawText === null ? `# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>X</kbd>.\n\nTo save the file click the *save* button or press <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>S</kbd>.\n\nCheers!` : rawText;
+        save();
+    }
+    else {
+        const note = getNote(lastOpened);
+        if(note !== null) {
+            switchNote(note);
+        }
+    }
 
     // Enable modal dragging
     dragModal('history');
@@ -773,6 +784,7 @@ const switchNote = (note, editmode = false) => {
     else 
         show();
     hideNoteAddSection();
+    localStorage.setItem("lastOpened", lastOpenedNote);
 };
 
 /* this variable tracks which note is open, if its default the data is read from localstorage.{rawText|lastEdited|history}, 
