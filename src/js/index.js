@@ -90,6 +90,10 @@ const edit = () => {
     textarea.focus();
     textarea.scrollTop = 0;
 
+    // Toggle button display
+    removeClass(getHtmlElement('#save'), 'nodisplay');
+    addClass(getHtmlElement('#edit'), 'nodisplay');
+
 };
 
 // Main save function
@@ -108,6 +112,10 @@ const save = () => {
             setHistory();
         }
     }
+
+    // Toggle button display
+    removeClass(getHtmlElement('#edit'), 'nodisplay');
+    addClass(getHtmlElement('#save'), 'nodisplay');
 
 };
 
