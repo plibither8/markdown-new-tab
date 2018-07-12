@@ -41,6 +41,7 @@ const settingsSection          = getHtmlElement('section.settings');
 let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
 let saveHistory;               // settings.saveHistory Boolean
+let cursorLastPosition;        // settings.cursorLastPosition Boolean
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
@@ -86,9 +87,16 @@ const moveCaretToStart = () => {
 const edit = () => {
 
     toggleDisplay(1);
-    moveCaretToStart();
     textarea.focus();
-    textarea.scrollTop = 0;
+
+    if (cursorLastPosition) {
+        textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
+    }
+
+    else {
+        moveCaretToStart();
+        textarea.scrollTop = 0;
+    }
 
     // Toggle button display
     removeClass(getHtmlElement('#save'), 'nodisplay');
@@ -99,6 +107,8 @@ const edit = () => {
 // Main save function
 const save = () => {
 
+    localStorage.setItem('cursorLastPosition', textarea.selectionStart);
+
     toggleDisplay(0);
     const text = textarea.value;
     const html = converter.makeHtml(text);
@@ -106,9 +116,9 @@ const save = () => {
 
     if (html !== converter.makeHtml(rawText)) {
         localStorage.setItem('rawText', text);
-        localStorage.setItem('lastEdited', (new Date()));
         rawText = text;
         if (saveHistory) {
+            localStorage.setItem('lastEdited', (new Date()));
             setHistory();
         }
     }
@@ -257,9 +267,11 @@ const setSettings = (key, value) => {
      * If settings is null, page is opened for the first time thus
      * initialise with these defaults
      */
-    if (settings === null) {
+
+    if (settings === null || Object.keys(settings).length !== 5) {
         settings = {
             'saveHistory': true,
+            'cursorLastPosition': true,
             'enablePowerMode': true,
             'PowerModeColor': false,
             'PowerModeShake': false
@@ -308,6 +320,8 @@ const applySettings = () => {
 
     // Save History
     saveHistory = settings.saveHistory;
+    // Cursor at End of Document
+    cursorLastPosition = settings.cursorLastPosition;
     // Enable POWER MODE
     settings.enablePowerMode ? textarea.addEventListener('input', POWERMODE, false) : textarea.removeEventListener('input', POWERMODE, false);
     // Colored POWER MODE
@@ -386,7 +400,7 @@ const closeModal = (section) => {
  * Drag the revision modal with the header as the handle
  * Code borrowed and modified to es6 standards from:
  * https://www.w3schools.com/howto/howto_js_draggable.asp
- * 
+ *
  * @param {String} name - name of modal to add draggability to
  */
 const dragModal = (name) => {
