@@ -152,7 +152,7 @@ const save = () => {
                     note.rawText = text;
                     rawText = text;
                     note.lastEdited = new Date();
-                    note.history = []
+                    note.history = [];
                     if(saveHistory) {
                         note.history = updateNoteHistory(note);
                     }
@@ -611,8 +611,8 @@ const initiate = () => {
     let noteName = 'Default';
     getHtmlElement('#name').innerHTML = `${noteName}`;
 
-    let lastOpened = localStorage.getItem("lastOpened");
-    if(lastOpened === null || lastOpened === "default")
+    let lastOpened = localStorage.getItem('lastOpened');
+    if(lastOpened === null || lastOpened === 'default')
     {
         /**
          * 1. Get `rawText` from localStorage and populate textarea with it
@@ -809,7 +809,7 @@ const switchNote = (note, editmode = false) => {
     else 
         show();
     hideNoteAddSection();
-    localStorage.setItem("lastOpened", lastOpenedNote);
+    localStorage.setItem('lastOpened', lastOpenedNote);
 };
 
 /* this variable tracks which note is open, if its default the data is read from localstorage.{rawText|lastEdited|history}, 
