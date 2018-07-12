@@ -33,6 +33,13 @@ $ git clone https://github.com/plibither8/markdown-new-tab
 4. Click the 'Load Unpacked Extension' button and select the `dist/` folder of the cloned repository.
 5. The extension should be loaded now and the 'New Tab' page should be Markdown New Tab. 🎉
 
+### Testing in Firefox
+In Firefox the extension can be installed temporarily until you restart the browser. To do so:
+1. enter "about:debugging" in the URL bar
+2. click "Load Temporary Add-on"
+3. open the extension's directory in your local repo and select [dist/manifest.json](markdown-new-tab/dist/manifest.json)
+More info [here](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox).
+
 ## Usage
 
 You can edit and save the texts either by pressing the buttons on the top right, or by using the shortcuts <kbd>Ctrl</kbd> + <kbd>X</kbd> (or <kbd>Cmd</kbd> + <kbd>X</kbd> on Mac) to edit the text and <kbd>Ctrl</kbd> + <kbd>S</kbd> (or <kbd>Cmd</kbd> + <kbd>S</kbd> on Mac) to save the text.
