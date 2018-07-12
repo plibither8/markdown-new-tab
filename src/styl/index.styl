@@ -263,6 +263,16 @@ section.settings, section.notes-add, section.notes-edit
     .body
         height 100%
         width 100%
+        overflow-y auto
+
+        &::-webkit-scrollbar
+            width 15px
+            background #000
+
+        &::-webkit-scrollbar-thumb
+            background #000
+            border 1px solid white
+            border-right none
     
     .item
         padding 25px 40px
@@ -283,6 +293,7 @@ section.settings, section.notes-add, section.notes-edit
                 font-size 16px
                 color #bbb
                 margin-top 10px
+                margin-right 20px
 
         .switch
             height 30px
