@@ -31,6 +31,15 @@ const removeClass = (el, className) => {
 };
 
 /**
+ * Define shorthand function to toggle `element.classList.toggle`
+ * @param {Node} el - CSS selector element whose class needs to be modified
+ * @param {String} className - class name that needs to be removed from classlist
+ */
+const toggleClass = (el, className) => {
+    el.classList.toggle(className);
+};
+
+/**
  * Declare global variables
  */
 const renderBox                = getHtmlElement('.markdown-body');
@@ -38,6 +47,9 @@ const textarea                 = getHtmlElement('textarea');
 const mainSection              = getHtmlElement('section.main');
 const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
+const notelistSection          = getHtmlElement('section.notelist');
+const noteaddSection           = getHtmlElement('section.notes-add');
+const noteeditSection          = getHtmlElement('section.notes-edit');
 let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
 let saveHistory;               // settings.saveHistory Boolean
@@ -81,7 +93,15 @@ const moveCaretToStart = () => {
     }
 
 };
-
+const show = () => {
+    toggleDisplay(0);
+    moveCaretToStart();
+    textarea.focus();
+    textarea.scrollTop = 0;
+    const text = textarea.value;
+    const html = converter.makeHtml(text);
+    renderBox.innerHTML = html;
+};
 // Main edit function
 const edit = () => {
 
@@ -101,14 +121,92 @@ const save = () => {
     renderBox.innerHTML = html;
 
     if (html !== converter.makeHtml(rawText)) {
-        localStorage.setItem('rawText', text);
-        localStorage.setItem('lastEdited', (new Date()));
-        rawText = text;
-        if (saveHistory) {
-            setHistory();
+        if(lastOpenedNote === 'default') {
+            localStorage.setItem('rawText', text);
+            localStorage.setItem('lastEdited', (new Date()));
+            rawText = text;
+            if (saveHistory) {
+                setHistory();
+            }
+        }
+        else {
+            const notes = localStorage.getItem('notes');
+            if(notes !== null) {
+                const noteObj = JSON.parse(notes);
+                if(lastOpenedNote in noteObj) {
+                    const note = noteObj[lastOpenedNote];
+                    note.rawText = text;
+                    rawText = text;
+                    note.lastEdited = new Date();
+                    noteObj[lastOpenedNote] = note;
+                    note.history = updateNoteHistory(note);
+                    localStorage.setItem('notes', JSON.stringify(noteObj));
+                }
+            }
         }
     }
 
+};
+
+/**
+ * returns a note object based on note id or null
+ * @param {string} noteid 
+ */
+const getNote = (noteid) => {
+    const notes = localStorage.getItem('notes');
+    if(notes !== null) {
+        const noteObj = JSON.parse(notes);
+        if(noteid in noteObj) {
+            return noteObj[noteid];
+        }
+    }
+    return null;
+};
+
+/**
+ * overwrite compelete history of note
+ * @param {Array} history 
+ */
+const setNoteHistory =  (history) => {
+    const notes = localStorage.getItem('notes');
+    if(notes !== null) {
+        const noteObj = JSON.parse(notes);
+        if(lastOpenedNote in noteObj) {
+            const note = noteObj[lastOpenedNote];
+            note.history = history;
+            localStorage.setItem('notes', JSON.stringify(noteObj));
+        }
+    }
+};
+
+/**
+ * adds to note's history
+ * @param {Object} note 
+ */
+const updateNoteHistory = (note) => {
+    const history = note.history;
+    const historyItem = {
+        'date': (new Date()),
+        'text': rawText
+    };
+    history.unshift(historyItem);
+    return history;
+};
+
+/**
+ * returns array of history for lastOpenedNote 
+ */
+const getNoteHistory = () => {
+    if(lastOpenedNote === 'default') {return getHistory(); }
+    const history = [];
+    const notes = localStorage.getItem('notes');
+    if(notes !== null) {
+        const noteObj = JSON.parse(notes);
+        if(lastOpenedNote in noteObj) {
+            return noteObj[lastOpenedNote].history;
+        }
+    }
+    return history;
 };
 
 /**
@@ -172,7 +270,7 @@ const displayTextarea = (item) => {
 const populateHistoryHtml = () => {
 
     let listElements = '';
-    const history = getHistory();
+    const history = lastOpenedNote === 'default' ? getHistory() : getNoteHistory();
     const length = history.length;
 
     history.map((item, id) => {
@@ -217,7 +315,10 @@ const populateHistoryHtml = () => {
 
         deleteButton.addEventListener('click', () => {
             history.splice(length - index - 1, 1);
-            localStorage.setItem('history', JSON.stringify(history));
+            if(lastOpenedNote === 'default')
+                localStorage.setItem('history', JSON.stringify(history));
+            else 
+                setNoteHistory(history);
             populateHistoryHtml(); // Refresh the Revision History modal with updated content
         });
         viewButton.addEventListener('click', () => {
@@ -440,7 +541,7 @@ const timeDisplay = () => {
         const seconds = today.getSeconds()     < 10 ? '0' + today.getSeconds()     : today.getSeconds();
 
         const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
-        timeEl.innerHTML = output;
+        timeEl.innerHTML = '&nbsp;-&nbsp;' + output;
     }, 1000);
 };
 
@@ -481,7 +582,9 @@ const initiate = () => {
      * tasklists, tables, simple-line-breaks etc.
      */
     converter.setFlavor('github');
-
+    populateNotes();
+    let noteName = 'Default';
+    getHtmlElement('#name').innerHTML = `${noteName}`;
     /**
      * 1. Get `rawText` from localStorage and populate textarea with it
      * 2. Initiate first `save` to render markdown
@@ -500,7 +603,11 @@ const initiate = () => {
      * Last edited: _______
      */
     setInterval(() => {
-        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
+        let lastEdited = localStorage.getItem('lastEdited');
+        if(lastOpenedNote !== 'default') {
+            lastEdited = getNote(lastOpenedNote).lastEdited;
+        }
+        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(lastEdited))}`;
     }, 1000);
 
     /**
@@ -512,12 +619,17 @@ const initiate = () => {
     /**
      * Add event listeners to edit, save and modal buttons
      */
-    getHtmlElement('#edit')         .addEventListener('click', () => { edit();                                         }, false);
-    getHtmlElement('#save')         .addEventListener('click', () => { save();                                         }, false);
-    getHtmlElement('#lastEdited')   .addEventListener('click', () => { openModal(historySection, populateHistoryHtml); }, false);
-    getHtmlElement('#closeHistory') .addEventListener('click', () => { closeModal(historySection);                     }, false);
-    getHtmlElement('#settings')     .addEventListener('click', () => { openModal(settingsSection, settingsControl);    }, false);
-    getHtmlElement('#closeSettings').addEventListener('click', () => { closeModal(settingsSection);                    }, false);
+    getHtmlElement('#edit')             .addEventListener('click', () => { edit();                                         }, false);
+    getHtmlElement('#save')             .addEventListener('click', () => { save();                                         }, false);
+    getHtmlElement('#lastEdited')       .addEventListener('click', () => { openModal(historySection, populateHistoryHtml); }, false);
+    getHtmlElement('#closeHistory')     .addEventListener('click', () => { closeModal(historySection);                     }, false);
+    getHtmlElement('#settings')         .addEventListener('click', () => { openModal(settingsSection, settingsControl);    }, false);
+    getHtmlElement('#closeSettings')    .addEventListener('click', () => { closeModal(settingsSection);                    }, false);
+    getHtmlElement('#settings-add')     .addEventListener('click', () => { toggleClass(notelistSection, 'nodisplay');      }, false);
+    getHtmlElement('#closeNotesAdd')    .addEventListener('click', () => { closeModal(noteaddSection);                     }, false);
+    getHtmlElement('#closeNotesEdit')    .addEventListener('click',() => { closeModal(noteeditSection);                    }, false);
+    getHtmlElement('#note-submit')      .addEventListener('click', () => { addNote();                                      }, false);
+    getHtmlElement('#name')             .addEventListener('click', () => { editNoteMetaData();                             }, false);
 
     /**
      * Capture keystrokes and perform respective functions:
@@ -551,6 +663,143 @@ const initiate = () => {
 
 };
 
+/* clicking on note name in footer, allows you to edit name of the note or delete it */
+const editNoteMetaData= () => {
+    if(lastOpenedNote === 'default') {
+        alert('Default Note cannot be modifed!');
+    }
+    else {
+        const note = getNote(lastOpenedNote);
+        if(note === null) { return; }
+        getHtmlElement('#note-edit-name').value = note.name;
+        openModal(noteeditSection);
+
+        getHtmlElement('#note-name-submit').addEventListener('click', () => {
+            note.name = getHtmlElement('#note-edit-name').value;
+            const notes = localStorage.getItem('notes');
+            if(notes != null) {
+                const notesObj = JSON.parse(notes);
+                if(note.id in notesObj) {
+                    notesObj[note.id] = note;
+                }
+                localStorage.setItem('notes', JSON.stringify(notesObj));
+                switchNote(note);
+            }
+            closeModal(noteeditSection);
+            populateNotes();
+        });
+        getHtmlElement('#note-delete').addEventListener('click', () => {
+            note.name = getHtmlElement('#note-edit-name').value;
+            const notes = localStorage.getItem('notes');
+            if(notes != null) {
+                const notesObj = JSON.parse(notes);
+                if(note.id in notesObj) {
+                    delete notesObj[note.id];
+                    localStorage.setItem('notes', JSON.stringify(notesObj));
+                    switchToDefaultNote();
+                }
+            }
+            closeModal(noteeditSection);
+            populateNotes();
+        });
+
+    }
+};
+
+/* populate the sidebar with the notes we have so far */
+const populateNotes = () => {
+    let listElements = '';
+    let notes = localStorage.getItem('notes');
+    [...document.querySelectorAll('section.notelist .item')].reverse().map((item, _index) => {
+        if(item.getAttribute('data-setting') === 'note') {
+            item.remove();
+        }
+    });
+    if(notes !== null && notes.length > 0) {
+        notes = JSON.parse(notes);
+        Object.keys(notes).map(function(key, _index) {
+            const name = notes[key].name;
+            const id = notes[key].id;
+            listElements += `<div class="item flex" data-setting="note" id=${id}><div class="main flex"><label>${name}</label></div></div>`;
+        });
+    }
+
+    getHtmlElement('section.notelist').innerHTML += listElements;
+    [...document.querySelectorAll('section.notelist .item')].reverse().map((item, _index) => {
+        if(item.getAttribute('data-setting') === 'note') {
+            item.addEventListener('click', () => {
+                const note = getNote(item.id);
+                if(note !== null) {
+                    switchNote(note);
+                }
+                else {
+                    alert('Error Fetching Note with name: ' + item.innerHTML);
+                }
+            });
+        }
+        else if(item.id == 'notelist-default') {
+            item.addEventListener('click', () => {
+                switchToDefaultNote();
+            });
+        }
+    });
+    getHtmlElement('#notelist-add-note').addEventListener('click', () => { openModal(noteaddSection, hideNoteAddSection);}, false);
+};
+
+/* hide note addSection */
+const hideNoteAddSection = () => {
+    addClass(notelistSection, 'nodisplay'); 
+};
+
+/* switches to default note */
+const switchToDefaultNote = () => {
+    let note = {};
+    note.id = 'default';
+    note.name = 'Default';
+    note.rawText = localStorage.getItem('rawText');
+    switchNote(note);
+};
+
+/* switches to a note defined in `note` can switch by note.id or to default via switchToDefaultNote 
+ * @param {Object} note - Object defining the note
+ * @param {Boolean} editmode - open in edit mode or rendered mode
+*/
+const switchNote = (note, editmode = false) => {
+    lastOpenedNote = note.id;
+    textarea.value = note.rawText;
+    getHtmlElement('#name').innerHTML = `${note.name}`;
+    if(editmode)
+        edit();
+    else 
+        show();
+    hideNoteAddSection();
+};
+
+/* this variable tracks which note is open, if its default the data is read from localstorage.{rawText|lastEdited|history}, 
+   if its anything else we look for notes section in localstorage and try to find the note based on the value of this variable.
+*/
+var lastOpenedNote = 'default';
+
+/* create a new note functionality, creates `notes` section in localStorage if its not present */
+const addNote = () => {
+    const name = getHtmlElement('#note-add-name').value;
+    let notes = localStorage.getItem('notes');
+    if(notes === null) { notes = {}; }
+    else { notes = JSON.parse(notes); }
+    if(name !== null && name.length > 0 ) {
+        const note = {};
+        note.name = name;
+        note.id = 'note_id_' + (new Date().getTime());
+        note.rawText = 'Click to start editing!';
+        note.history = [];
+        note.lastEdited = new Date();
+        notes[note.id] = note;
+        localStorage.setItem('notes', JSON.stringify(notes));
+        closeModal(noteaddSection);
+        switchNote(note, true);
+        populateNotes();
+    }
+};
 /**
  * INITIATE!!!
  */

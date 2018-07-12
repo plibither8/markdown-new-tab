@@ -42,6 +42,40 @@ section.bar
         width 40px
         position absolute
         left 0
+    .button-add
+        padding 0
+        height 100%
+        width 40px
+        position absolute
+        left 40px
+        img
+            cursor pointer
+            height 25px
+            width auto
+
+section.notelist
+    background: black;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    font-size: 20px;
+    transition: .1s all linear;
+    position: absolute;
+    left: 2.7%;
+    color: #fff;
+    bottom: 0%;
+    border: 1px solid white;
+    padding-left: 10px;
+    padding-right: 10px;
+    flex-direction: column;
+    .main
+        border-bottom: 1px solid white;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        
+        label
+            cursor:pointer;
+
+
 
 section.main
     height 100%
@@ -102,7 +136,8 @@ section.main
         outline 1px solid white
 
 
-section.history, section.settings
+
+section.history, section.settings, section.notes-add, section.notes-edit
     height 80vh
     max-width 1200px
     width 95%
@@ -224,8 +259,7 @@ section.history
             padding-bottom 20px
             justify-content space-between
 
-section.settings
-
+section.settings, section.notes-add, section.notes-edit
     .body
         height 100%
         width 100%
@@ -268,3 +302,27 @@ section.settings
         &.off
             .box
                 background none
+
+section.notes-add, section.notes-edit
+    height 20vh
+    top 40%
+    width 50%
+
+.note-add-input
+    height: 30px;
+    width: 193px;
+    color: white;
+    background: black;
+    border: 1px solid white;
+    font-size: 17px;
+    padding: 8px;
+
+.note-submit
+    font-size: 22px;
+    border: 1px solid white;
+    width: 30%;
+    justify-content: center;
+    padding: 0px;
+
+.pointer 
+    cursor: pointer;

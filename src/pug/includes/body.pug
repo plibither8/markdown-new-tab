@@ -75,11 +75,52 @@
 
                 .switch.flex
                     .box
+    
+    section.notes-add.flex.nodisplay
+        .header.flex
+            h1 Add Note
+            .noselect.close#closeNotesAdd
+                img(src="/assets/svg/close.svg").nodrag
+        .body.noselect
+            .item.flex(data-setting='note-name')
+                .main.flex
+                    label Enter Name
+                .textfield.flex
+                    input.note-add-input#note-add-name
+            .item.flex(data-setting='note-submit')
+                .button.flex.note-submit#note-submit
+                    label.pointer Submit
 
-
+    section.notes-edit.flex.nodisplay
+        .header.flex
+            h1 Edit Note
+            .noselect.close#closeNotesEdit
+                img(src="/assets/svg/close.svg").nodrag
+        .body.noselect
+            .item.flex(data-setting='note-edit-name')
+                .main.flex
+                    label Enter Name
+                .textfield.flex
+                    input.note-add-input#note-edit-name
+            .item.flex
+                .button.flex.note-submit#note-name-submit
+                    label.pointer Submit
+                .button.flex.note-submit#note-delete
+                    label.pointer Delete
+   
+    section.notelist.flex.nodisplay
+        .item.flex(data-setting='default', id="notelist-default")
+            .main.flex
+                label Default
+        .item.flex(data-setting='add',id="notelist-add-note")
+            .main.flex
+                label Add Note..
+    
     section.bar.flex.noselect
-
         .button.flex#settings
             img(src="/assets/svg/settings.svg").nodrag
+        .button.button-add.flex#settings-add
+            img(src="/assets/svg/notes.svg").nodrag
+        p.pointer#name
         p#time
         p#lastEdited
