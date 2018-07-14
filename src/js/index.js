@@ -547,24 +547,21 @@ const initiate = () => {
      * Ctrl + S => Save input (`save` function)
      * Ctrl + X => Edit input (`edit` function)
      *
-     * Esc => Close Revision History modal
+     * Esc => Close modals
      */
     document.addEventListener('keydown', (e) => {
         // Control Key
         if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
-            if (e.keyCode === 83) {
+            if (e.keyCode === 83 && renderBox.classList.contains('nodisplay')) {
                 e.preventDefault();
                 save();
             }
-            else if (e.keyCode === 88) {
-                // Allow for cutting text when textarea is on display
-                if (textarea.classList.contains('nodisplay')) {
-                    e.preventDefault();
-                    edit();
-                }
+            else if (e.keyCode === 88 && textarea.classList.contains('nodisplay')) {
+                e.preventDefault();
+                edit();
             }
         }
-        // Escape key to close Revision History Modal
+        // Escape key to close modals
         else if (e.keyCode === 27) {
             // Close each modal one-by-one from the last opened to the first opened
             activeModals.length > 0 ? closeModal([...activeModals].pop()) : null;
