@@ -37,7 +37,7 @@ $ git clone https://github.com/plibither8/markdown-new-tab
 In Firefox the extension can be installed temporarily until you restart the browser. To do so:
 1. enter "about:debugging" in the URL bar
 2. click "Load Temporary Add-on"
-3. open the extension's directory in your local repo and select [dist/manifest.json](markdown-new-tab/dist/manifest.json)
+3. open the extension's directory in your local repo and select [dist/manifest.json](dist/manifest.json)
 More info [here](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox).
 
 ## Usage
