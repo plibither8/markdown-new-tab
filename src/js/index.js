@@ -272,7 +272,7 @@ const setSettings = (key, value) => {
         settings = {
             'saveHistory': true,
             'cursorLastPosition': true,
-            'enablePowerMode': true,
+            'enablePowerMode': false,
             'PowerModeColor': false,
             'PowerModeShake': false
         };
