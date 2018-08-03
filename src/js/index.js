@@ -42,6 +42,7 @@ let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
 let saveHistory;               // settings.saveHistory Boolean
 let cursorLastPosition;        // settings.cursorLastPosition Boolean
+let returnKeyToggle            // settings.returnKeyToggle Boolean
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
@@ -268,10 +269,11 @@ const setSettings = (key, value) => {
      * initialise with these defaults
      */
 
-    if (settings === null || Object.keys(settings).length !== 5) {
+    if (settings === null || Object.keys(settings).length !== 6) {
         settings = {
             'saveHistory': true,
             'cursorLastPosition': true,
+            'returnKeyToggle': false,
             'enablePowerMode': false,
             'PowerModeColor': false,
             'PowerModeShake': false
@@ -322,6 +324,8 @@ const applySettings = () => {
     saveHistory = settings.saveHistory;
     // Cursor at End of Document
     cursorLastPosition = settings.cursorLastPosition;
+    // Toggle modes with Cmd/Ctrl + return key
+    returnKeyToggle = settings.returnKeyToggle;
     // Enable POWER MODE
     settings.enablePowerMode ? textarea.addEventListener('input', POWERMODE, false) : textarea.removeEventListener('input', POWERMODE, false);
     // Colored POWER MODE
@@ -552,13 +556,28 @@ const initiate = () => {
     document.addEventListener('keydown', (e) => {
         // Control Key
         if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
-            if (e.keyCode === 83 && renderBox.classList.contains('nodisplay')) {
-                e.preventDefault();
-                save();
-            }
-            else if (e.keyCode === 88 && textarea.classList.contains('nodisplay')) {
-                e.preventDefault();
-                edit();
+            if (returnKeyToggle) {
+                if (e.keyCode === 13) {
+                    if (renderBox.classList.contains('nodisplay')) {
+                        e.preventDefault();
+                        save();
+                    } else {
+                        e.preventDefault();
+                        edit();
+                    }
+                }
+            } else {
+                if (e.keyCode === 83) {
+                    e.preventDefault();
+                    if (renderBox.classList.contains('nodisplay')) {
+                        save();
+                    }
+                } else if (e.keyCode === 88) {
+                    e.preventDefault();
+                    if (textarea.classList.contains('nodisplay')) {
+                        edit();
+                    }
+                }
             }
         }
         // Escape key to close modals
