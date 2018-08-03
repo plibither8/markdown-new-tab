@@ -578,7 +578,7 @@ const initiate = () => {
             edit();
             textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
         }
-    })
+    });
 
 };
 
