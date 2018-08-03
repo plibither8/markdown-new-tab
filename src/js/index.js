@@ -577,7 +577,6 @@ const initiate = () => {
             save();
             edit();
             textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
-            console.log('autosaved');
         }
     })
 
