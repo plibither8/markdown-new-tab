@@ -568,6 +568,19 @@ const initiate = () => {
         }
     }, false);
 
+    /**
+     * "Auto-save" on tab change when tab is
+     *  unfocused and edit mode is active
+     */
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden && renderBox.classList.contains('nodisplay')) {
+            save();
+            edit();
+            textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
+            console.log('autosaved');
+        }
+    })
+
 };
 
 /**
