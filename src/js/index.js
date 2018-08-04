@@ -42,7 +42,7 @@ let rawText                    = localStorage.getItem('rawText');
 let activeModals               = [];  // array of active modals
 let saveHistory;               // settings.saveHistory Boolean
 let cursorLastPosition;        // settings.cursorLastPosition Boolean
-let returnKeyToggle            // settings.returnKeyToggle Boolean
+let returnKeyToggle;            // settings.returnKeyToggle Boolean
 let sectionMainEventListener;  // section.main eventListener (defined in `openModal` function)
 let converter;                 // Main markdown rendering converter (defined in `initiate` function)
 
@@ -63,14 +63,6 @@ const toggleDisplay = (n) => {
     }
 
 };
-
-const localToChromeStorage = () => {
-    if (localStorage.getItem('rawText')) {
-        chrome.storage.sync.set({
-            
-        })
-    }
-}
 
 /**
  * Move the textarea caret to the start of the
