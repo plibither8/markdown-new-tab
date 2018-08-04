@@ -64,6 +64,14 @@ const toggleDisplay = (n) => {
 
 };
 
+const localToChromeStorage = () => {
+    if (localStorage.getItem('rawText')) {
+        chrome.storage.sync.set({
+            
+        })
+    }
+}
+
 /**
  * Move the textarea caret to the start of the
  * line instead of the last line so that it is visible
@@ -106,7 +114,7 @@ const edit = () => {
 };
 
 // Main save function
-const save = () => {
+const save = (saveRevHist = 1) => {
 
     localStorage.setItem('cursorLastPosition', textarea.selectionStart);
 
@@ -118,7 +126,7 @@ const save = () => {
     if (html !== converter.makeHtml(rawText)) {
         localStorage.setItem('rawText', text);
         rawText = text;
-        if (saveHistory) {
+        if (saveHistory && saveRevHist) {
             localStorage.setItem('lastEdited', (new Date()));
             setHistory();
         }
@@ -593,7 +601,7 @@ const initiate = () => {
      */
     document.addEventListener('visibilitychange', () => {
         if (document.hidden && renderBox.classList.contains('nodisplay')) {
-            save();
+            save(0);
             edit();
             textarea.selectionStart = Number(localStorage.getItem('cursorLastPosition'));
         }
