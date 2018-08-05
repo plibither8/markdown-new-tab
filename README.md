@@ -19,7 +19,7 @@ Markdown New Tab is a replacement for the default Google Chrome new tab page. Re
 
 ### Features
 
-* Take down *styled* notes 🗒️, create checklists ☑️, links 🔗, tables and reminders ⏰, add images 🖼️ (and all other frills associated with mArKdOwN [M↓])
+* Take down *styled* notes 🗒️, create checklists ☑️, links 🔗, tables and reminders ⏰, add images 🖼️ (and all other frills associated with ｍａｒｋｄｏｗｎ [M↓])
 
 * ⏰ 💾 Automatically saves (and deletes) revision history for you to look back and reminisce
 
