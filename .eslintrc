@@ -11,7 +11,8 @@
   "globals": {
     "POWERMODE": true,
     "timeago": true,
-    "showdown": true
+    "showdown": true,
+    "chrome": true
   },
   "extends": "eslint:recommended",
   "rules": {
@@ -30,6 +31,7 @@
     "semi": [
       "error",
       "always"
-    ]
+    ],
+    "no-console": "off"
   }
 }
