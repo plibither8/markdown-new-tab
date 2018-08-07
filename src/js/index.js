@@ -31,6 +31,21 @@ const removeClass = (el, className) => {
 };
 
 /**
+ * Wrapper: localStorage.setItem
+ */
+const SyncStorageSet = (name, value) => {
+    localStorage.setItem(name, value);
+    let item = {};
+    item[name] = value;
+    chrome.storage.sync.set(item, () => {
+        if (chrome.runtime.error) {
+            console.error('Runtime Error.');
+        }
+    });
+};
+
+
+/**
  * Declare global variables
  */
 const renderBox                = getHtmlElement('.markdown-body');
@@ -38,7 +53,7 @@ const textarea                 = getHtmlElement('textarea');
 const mainSection              = getHtmlElement('section.main');
 const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
-let rawText                    = localStorage.getItem('rawText');
+let rawText;
 let activeModals               = [];  // array of active modals
 let saveHistory;               // settings.saveHistory Boolean
 let cursorLastPosition;        // settings.cursorLastPosition Boolean
@@ -108,7 +123,7 @@ const edit = () => {
 // Main save function
 const save = (saveRevHist = 1) => {
 
-    localStorage.setItem('cursorLastPosition', textarea.selectionStart);
+    SyncStorageSet('cursorLastPosition', textarea.selectionStart);
 
     toggleDisplay(0);
     const text = textarea.value;
@@ -116,10 +131,10 @@ const save = (saveRevHist = 1) => {
     renderBox.innerHTML = html;
 
     if (html !== converter.makeHtml(rawText)) {
-        localStorage.setItem('rawText', text);
+        SyncStorageSet('rawText', text);
         rawText = text;
         if (saveHistory && saveRevHist) {
-            localStorage.setItem('lastEdited', (new Date()));
+            SyncStorageSet('lastEdited', (new Date()));
             setHistory();
         }
     }
@@ -150,7 +165,10 @@ const setHistory = () => {
         'text': rawText
     };
     history.unshift(historyItem);
-    localStorage.setItem('history', JSON.stringify(history));
+    if (history.length > 10) {
+        history.pop();
+    }
+    SyncStorageSet('history', JSON.stringify(history));
 };
 
 /**
@@ -236,7 +254,7 @@ const populateHistoryHtml = () => {
 
         deleteButton.addEventListener('click', () => {
             history.splice(length - index - 1, 1);
-            localStorage.setItem('history', JSON.stringify(history));
+            SyncStorageSet('history', JSON.stringify(history));
             populateHistoryHtml(); // Refresh the Revision History modal with updated content
         });
         viewButton.addEventListener('click', () => {
@@ -252,7 +270,7 @@ const populateHistoryHtml = () => {
  */
 const getSettings = () => {
     const rawSettings = localStorage.getItem('settings');
-    const settings = rawSettings === null ? null : JSON.parse(rawSettings);
+    const settings = typeof rawSettings == 'string' ? JSON.parse(rawSettings) : null;
     return settings;
 };
 
@@ -284,7 +302,7 @@ const setSettings = (key, value) => {
         settings[key] = value;
     }
 
-    localStorage.setItem('settings', JSON.stringify(settings));
+    SyncStorageSet('settings', JSON.stringify(settings));
 };
 
 /**
@@ -474,6 +492,7 @@ const timeDisplay = () => {
  * Main initiator function
  */
 const initiate = () => {
+    rawText = localStorage.getItem('rawText');
 
     /**
      * First things first: Set and apply settings
@@ -605,5 +624,16 @@ const initiate = () => {
  * INITIATE!!!
  */
 (() => {
-    initiate();
+    /**
+     * Sync
+     */
+    chrome.storage.sync.get(null, (items) => {
+        if (!chrome.runtime.error) {
+            for (var name in items) {
+                var value = items[name];
+                localStorage.setItem(name, value);
+            }
+            initiate();
+        }
+    });
 })();
