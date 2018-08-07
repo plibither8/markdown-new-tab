@@ -35,13 +35,15 @@ const removeClass = (el, className) => {
  */
 const SyncStorageSet = (name, value) => {
     localStorage.setItem(name, value);
-    let item = {};
-    item[name] = value;
-    chrome.storage.sync.set(item, () => {
-        if (chrome.runtime.error) {
-            console.error('Runtime Error.');
-        }
-    });
+    if (typeof chrome !== undefined) {
+        let item = {};
+        item[name] = value;
+        chrome.storage.sync.set(item, () => {
+            if (chrome.runtime.error) {
+                console.error('Runtime Error.');
+            }
+        });
+    }
 };
 
 
@@ -624,16 +626,20 @@ const initiate = () => {
  * INITIATE!!!
  */
 (() => {
-    /**
-     * Sync
-     */
-    chrome.storage.sync.get(null, (items) => {
-        if (!chrome.runtime.error) {
-            for (var name in items) {
-                var value = items[name];
-                localStorage.setItem(name, value);
+    if (typeof chrome !== undefined) {
+        /**
+         * Chrome Sync
+         */
+        chrome.storage.sync.get(null, (items) => {
+            if (!chrome.runtime.error) {
+                for (var name in items) {
+                    var value = items[name];
+                    localStorage.setItem(name, value);
+                }
+                initiate();
             }
-            initiate();
-        }
-    });
+        });
+    } else {
+        initiate();
+    }
 })();
