@@ -357,6 +357,13 @@ section.dashboard
     font-size 20px
     flex-flow row wrap
     overflow auto
+    &.blur
+        filter blur(5px)
+        user-select none
+    &.noblur
+        filter blur(0px)
+        user-select default
+
 .markdown-preview
     height 400px
     overflow hidden

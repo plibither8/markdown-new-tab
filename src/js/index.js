@@ -485,6 +485,8 @@ const openModal = (section, func) => {
     removeClass(section, 'nodisplay');
     removeClass(mainSection, 'noblur');
     addClass(mainSection, 'blur');
+    removeClass(dashboardSection, 'noblur');
+    addClass(dashboardSection, 'blur');
 
     // Add eventListener to section.main to enable closing modal by clicking outside the modal
     if (!sectionMainEventListener) {
@@ -518,6 +520,8 @@ const closeModal = (section) => {
     if (activeModals.length === 0) {
         removeClass(mainSection, 'blur');
         addClass(mainSection, 'noblur');
+        removeClass(dashboardSection, 'blur');
+        addClass(dashboardSection, 'noblur');
     }
 
 };
@@ -923,7 +927,7 @@ const showDashboard = () => {
             dashboardSection.removeChild(dashboardSection.firstChild);
         var div = document.createElement('div');
         div.className = className;
-        div.innerHTML = converter.makeHtml(rawText);
+        div.innerHTML = converter.makeHtml(localStorage.getItem('rawText'));
         dashboardSection.appendChild(div);
         //add notes
         notes = JSON.parse(notes);
