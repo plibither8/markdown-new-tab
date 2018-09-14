@@ -1,6 +1,8 @@
 .container.flex
 
-    section.main.flex.noblur
+    section.dashboard.flex.noblur
+        .list
+    section.main.flex.noblur.nodisplay
 
         textarea(autofocus spellcheck="false")
 
@@ -130,6 +132,8 @@
             img(src="/assets/svg/settings.svg").nodrag
         .button.button-add.flex#settings-add
             img(src="/assets/svg/notes.svg").nodrag
+        .button.button-home.flex#settings-home
+            img(src="/assets/svg/home.svg").nodrag
         p.pointer#name
         p#time
         p#lastEdited

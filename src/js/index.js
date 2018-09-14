@@ -46,6 +46,7 @@ const toggleClass = (el, className) => {
 const renderBox                = getHtmlElement('.markdown-body');
 const textarea                 = getHtmlElement('textarea');
 const mainSection              = getHtmlElement('section.main');
+const dashboardSection         = getHtmlElement('section.dashboard');
 const historySection           = getHtmlElement('section.history');
 const settingsSection          = getHtmlElement('section.settings');
 const notelistSection          = getHtmlElement('section.notelist');
@@ -629,16 +630,14 @@ const initiate = () => {
      */
     converter.setFlavor('github');
     populateNotes();
+
+    /*
     let noteName = 'Default';
     getHtmlElement('#name').innerHTML = `${noteName}`;
 
     let lastOpened = localStorage.getItem('lastOpened');
     if(lastOpened === null || lastOpened === 'default')
     {
-        /**
-         * 1. Get `rawText` from localStorage and populate textarea with it
-         * 2. Initiate first `save` to render markdown
-         */
         textarea.value = rawText === null ? `# Hello, world!\n\nStart editing right now by clicking the *edit* button or pressing <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>X</kbd>.\n\nTo save the file click the *save* button or press <kbd>${navigator.platform.match('Mac') ? 'Cmd' : 'Ctrl'}</kbd> + <kbd>S</kbd>.\n\nCheers!` : rawText;
         save();
     }
@@ -648,6 +647,8 @@ const initiate = () => {
             switchNote(note);
         }
     }
+    */
+    showDashboard();
 
     // Enable modal dragging
     dragModal('history');
@@ -664,7 +665,10 @@ const initiate = () => {
         if(lastOpenedNote !== 'default') {
             lastEdited = getNote(lastOpenedNote).lastEdited;
         }
-        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(lastEdited))}`;
+        if(lastEdited == null)
+            getHtmlElement('#lastEdited').innerHTML = 'Last edited: -';
+        else
+            getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(lastEdited))}`;
     }, 1000);
 
     /**
@@ -687,6 +691,7 @@ const initiate = () => {
     getHtmlElement('#closeNotesEdit')   .addEventListener('click',() =>  { closeModal(noteeditSection);                    }, false);
     getHtmlElement('#note-submit')      .addEventListener('click', () => { addNote();                                      }, false);
     getHtmlElement('#name')             .addEventListener('click', () => { editNoteMetaData();                             }, false);
+    getHtmlElement('#settings-home')    .addEventListener('click', () => { showDashboard();                                }, false);
 
     /**
      * Capture keystrokes and perform respective functions:
@@ -838,6 +843,8 @@ const switchNote = (note, editmode = false) => {
         show();
     hideNoteAddSection();
     localStorage.setItem('lastOpened', lastOpenedNote);
+    removeClass(mainSection, 'nodisplay');
+    addClass(dashboardSection, 'nodisplay');
 };
 
 /* this variable tracks which note is open, if its default the data is read from localstorage.{rawText|lastEdited|history}, 
@@ -903,6 +910,37 @@ const localShake = (el,  i) => {
         el.style.marginLeft = '';
         el.style.marginTop = '';
     }, 75);
+};
+
+const showDashboard = () => {
+    removeClass(dashboardSection, 'nodisplay');
+    addClass(mainSection, 'nodisplay');
+    getHtmlElement('#name').innerHTML = 'Dashboard';
+    const className = 'markdown-body markdown-preview';
+    let notes = localStorage.getItem('notes');
+    if(notes != null && notes.length > 0) {
+        while(dashboardSection.firstChild)
+            dashboardSection.removeChild(dashboardSection.firstChild);
+        var div = document.createElement('div');
+        div.className = className;
+        div.innerHTML = converter.makeHtml(rawText);
+        dashboardSection.appendChild(div);
+        //add notes
+        notes = JSON.parse(notes);
+        Object.keys(notes).map(function(key, _index) {
+            //const name = notes[key].name;
+            //const id = notes[key].id;
+            var div = document.createElement('div');
+            div.className = className;
+            div.innerHTML = converter.makeHtml(notes[key].rawText);
+            dashboardSection.appendChild(div);
+        });
+        //add default note
+    }
+    else {
+        //if no notes object and only default note, switch to default
+        switchToDefaultNote();
+    }
 };
 /**
  * INITIATE!!!
