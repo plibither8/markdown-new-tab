@@ -31,5 +31,8 @@
   "bugs": {
     "url": "https://github.com/plibither8/markdown-new-tab/issues"
   },
-  "homepage": "https://github.com/plibither8/markdown-new-tab#readme"
+  "homepage": "https://github.com/plibither8/markdown-new-tab#readme",
+  "dependencies": {
+    "natives": "^1.1.6"
+  }
 }
