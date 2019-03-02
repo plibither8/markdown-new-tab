@@ -579,23 +579,22 @@ const initiate = () => {
         if (navigator.platform.match('Mac') ? e.metaKey : e.ctrlKey) {
             if (returnKeyToggle) {
                 if (e.keyCode === 13) {
+                    e.preventDefault();
                     if (renderBox.classList.contains('nodisplay')) {
-                        e.preventDefault();
                         save();
                     } else {
-                        e.preventDefault();
                         edit();
                     }
                 }
             } else {
                 if (e.keyCode === 83) {
+                    e.preventDefault();
                     if (renderBox.classList.contains('nodisplay')) {
-                        e.preventDefault();
                         save();
                     }
                 } else if (e.keyCode === 88) {
+                    e.preventDefault();
                     if (textarea.classList.contains('nodisplay')) {
-                        e.preventDefault();
                         edit();
                     }
                 }
