@@ -519,7 +519,7 @@ const initiate = () => {
         'smoothLivePreview': true,
         'smartIndentationFix': true,
         'simpleLineBreaks': true,
-        'openLinksInNewWindow': true,
+        'openLinksInNewWindow': false,
         'emoji': true
     });
 
