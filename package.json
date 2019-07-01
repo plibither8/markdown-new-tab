@@ -6,6 +6,10 @@
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "watch:firefox": "web-ext run --source-dir=dist",
+    "version": "dot-json dist/manifest.json version $VER",
+    "release:amo": "cd dist && web-ext-submit --api-key=\"$WEB_EXT_API_KEY\" --api-secret=\"$WEB_EXT_API_SECRET\"",
+    "release:cws": "cd dist && webstore upload --auto-publish",
+    "release": "VER=$(daily-version) npm-run-all build version release:amo create-git-tag",
     "create-git-tag": "git tag $VER -m $VER && git push origin $VER"
   },
   "dependencies": {
@@ -14,21 +18,26 @@
     "timeago.js": "^4.0.0-beta.2"
   },
   "devDependencies": {
+    "chrome-webstore-upload-cli": "^1.2.0",
     "copy-webpack-plugin": "^5.0.0",
     "css-loader": "^3.0.0",
+    "daily-version": "^0.12.0",
+    "dot-json": "^1.1.0",
     "html-webpack-plugin": "^3.2.0",
-    "pug-loader": "^2.4.0",
+    "npm-run-all": "^4.1.5",
     "pug": "^2.0.4",
+    "pug-loader": "^2.4.0",
     "size-plugin": "^1.1.2",
     "style-loader": "^0.23.1",
-    "stylus-loader": "^3.0.2",
     "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "terser-webpack-plugin": "^1.2.3",
     "web-ext": "^3.0.0",
+    "web-ext-submit": "^2.9.3",
     "webext-options-sync": "^0.16.0",
     "webextension-polyfill": "^0.4.0",
-    "webpack-cli": "^3.2.3",
     "webpack": "^4.29.4",
+    "webpack-cli": "^3.2.3",
     "xo": "^0.24.0"
   },
   "xo": {

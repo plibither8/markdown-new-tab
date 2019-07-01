@@ -1,24 +1,24 @@
 {
-    "name": "Markdown New Tab",
-    "short_name": "Markdown New Tab",
-    "version": "1.4.6",
-    "description": "Take down notes 🗒️, save reminders ⏰, paste links 🔗, create checklists ☑️ all using markdown... directly in your New Tab!",
-    "manifest_version": 2,
-    "permissions": [
-        "storage"
-    ],
-    "chrome_url_overrides": {
-        "newtab": "index.html"
-    },
-    "author": "Mihir Chaturvedi (plibither8)",
-    "icons": {
-        "16": "static/icon/icon16.png",
-        "48": "static/icon/icon48.png",
-        "128": "static/icon/icon128.png"
-    },
-    "applications": {
-        "gecko": {
-            "id": "markdownnewtab@mihir.ch"
-        }
-    }
+	"name": "Markdown New Tab",
+	"short_name": "Markdown New Tab",
+	"version": "1.4.6",
+	"description": "Take down notes 🗒️, save reminders ⏰, paste links 🔗, create checklists ☑️ all using markdown... directly in your New Tab!",
+	"manifest_version": 2,
+	"permissions": [
+		"storage"
+	],
+	"chrome_url_overrides": {
+		"newtab": "index.html"
+	},
+	"author": "Mihir Chaturvedi (plibither8)",
+	"icons": {
+		"16": "static/icon/icon16.png",
+		"48": "static/icon/icon48.png",
+		"128": "static/icon/icon128.png"
+	},
+	"applications": {
+		"gecko": {
+			"id": "markdownnewtab@mihir.ch"
+		}
+	}
 }
