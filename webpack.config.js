@@ -17,18 +17,17 @@ module.exports = () => ({
 	},
 	module: {
 		rules: [{
-				test: /\.pug/,
-				use: 'pug-loader'
-			},
-			{
-				test: /\.styl/,
-				use: [
-					"style-loader",
-					"css-loader",
-					"stylus-loader"
-				]
-			}
-		]
+			test: /\.pug/,
+			use: 'pug-loader'
+		},
+		{
+			test: /\.styl/,
+			use: [
+				'style-loader',
+				'css-loader',
+				'stylus-loader'
+			]
+		}]
 	},
 	plugins: [
 		new SizePlugin(),

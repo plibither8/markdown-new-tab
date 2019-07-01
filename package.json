@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "lint": "xo",
-    "lint-fix": "run-p --silent 'lint -- --fix'",
+    "lint-fix": "xo --fix",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "watch:firefox": "web-ext run --source-dir=dist",
@@ -36,12 +36,14 @@
       "browser"
     ],
     "globals": [
-      "browser"
+      "browser",
+      "POWERMODE"
     ],
     "rules": {
       "import/no-unassigned-import": 0,
       "import/no-named-as-default": 0,
-      "no-script-url": 0
+      "no-script-url": 0,
+      "brace-style": 0
     }
   }
 }
