@@ -27,15 +27,15 @@ Markdown New Tab is a replacement for the default Google Chrome new tab page. Re
 
 * 💪 💪 ACTIVATE POWERMODE! (enable in settings)
 
-### Upcoming
-
 * Sync notes, revision history and settings between all Chrome browsers you are logged into
+
+* Support for Mozilla Firefox (???)
+
+### Upcoming
 
 * Change background and foreground colours
 
 * Split editing to show live preview
-
-* Support for Mozilla Firefox (???)
 
 ## Usage
 

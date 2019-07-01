@@ -1,3 +1,8 @@
+import './styl/index.styl';
+
+import showdown from 'showdown';
+import {format} from 'timeago.js';
+
 /**
  * Define helper functions
  */
@@ -35,15 +40,13 @@ const removeClass = (el, className) => {
  */
 const SyncStorageSet = (name, value) => {
     localStorage.setItem(name, value);
-    if (typeof chrome !== undefined) {
-        let item = {};
-        item[name] = value;
-        chrome.storage.sync.set(item, () => {
-            if (chrome.runtime.error) {
-                console.error('Runtime Error.');
-            }
-        });
-    }
+    const item = {};
+    item[name] = value;
+    browser.storage.sync.set(item).then(() => {
+        if (browser.runtime.error) {
+            console.error('Runtime Error.');
+        }
+    });
 };
 
 
@@ -228,10 +231,10 @@ const populateHistoryHtml = () => {
                     </div>
                     <div class='noselect flex'>
                         <div class='button'>
-                            <img class='nodrag' src='/assets/svg/bin.svg'/>
+                            <img class='nodrag' src='/static/svg/bin.svg'/>
                         </div>
                         <div class='button'>
-                            <img class='nodrag' src='/assets/svg/view.svg'/>
+                            <img class='nodrag' src='/static/svg/view.svg'/>
                         </div>
                     </div>
                 </div>
@@ -547,7 +550,7 @@ const initiate = () => {
      * Last edited: _______
      */
     setInterval(() => {
-        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${timeago().format(Date.parse(localStorage.getItem('lastEdited')))}`;
+        getHtmlElement('#lastEdited').innerHTML = `Last edited: ${format(Date.parse(localStorage.getItem('lastEdited')))}`;
     }, 1000);
 
     /**
@@ -626,20 +629,16 @@ const initiate = () => {
  * INITIATE!!!
  */
 (() => {
-    if (typeof chrome !== undefined) {
-        /**
-         * Chrome Sync
-         */
-        chrome.storage.sync.get(null, (items) => {
-            if (!chrome.runtime.error) {
-                for (var name in items) {
-                    var value = items[name];
-                    localStorage.setItem(name, value);
-                }
-                initiate();
+    /**
+     * browser Sync
+     */
+    browser.storage.sync.get().then(items => {
+        if (!browser.runtime.error) {
+            for (var name in items) {
+                var value = items[name];
+                localStorage.setItem(name, value);
             }
-        });
-    } else {
-        initiate();
-    }
+            initiate();
+        }
+    });
 })();

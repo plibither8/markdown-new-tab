@@ -12,8 +12,8 @@
     },
     "author": "Mihir Chaturvedi (plibither8)",
     "icons": {
-        "16": "assets/icon/icon16.png",
-        "48": "assets/icon/icon48.png",
-        "128": "assets/icon/icon128.png"
+        "16": "static/icon/icon16.png",
+        "48": "static/icon/icon48.png",
+        "128": "static/icon/icon128.png"
     }
 }
