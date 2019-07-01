@@ -629,8 +629,8 @@ const initiate = () => {
 	 */
 	browser.storage.sync.get().then(items => {
 		if (!browser.runtime.error) {
-			for (const item of items) {
-				localStorage.setItem(name, item);
+			for (const [key, value] of Object.entries(items)) {
+				localStorage.setItem(key, value);
 			}
 
 			initiate();
