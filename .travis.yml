@@ -4,4 +4,5 @@ node_js:
 install:
   - npm install
 script:
-  - npm run lint:fix
+  - npm run lint
+  - npm run build
