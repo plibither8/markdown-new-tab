@@ -15,5 +15,10 @@
         "16": "static/icon/icon16.png",
         "48": "static/icon/icon48.png",
         "128": "static/icon/icon128.png"
+    },
+    "applications": {
+        "gecko": {
+            "id": "markdownnewtab@mihir.ch"
+        }
     }
 }
