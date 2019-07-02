@@ -58,6 +58,7 @@ const mainSection = getHtmlElement('section.main');
 const historySection = getHtmlElement('section.history');
 const settingsSection = getHtmlElement('section.settings');
 let rawText;
+let isPowerModeEventListenerSet = false; // Boolean to prevent multiple eventlisteners
 const activeModals = []; // Array of active modals
 let saveHistory; // Settings.saveHistory Boolean
 let cursorLastPosition; // Settings.cursorLastPosition Boolean
@@ -284,9 +285,9 @@ const setSettings = (key, value) => {
 			PowerModeColor: false,
 			PowerModeShake: false
 		};
-	} else {
-		settings[key] = value;
 	}
+
+	settings[key] = value;
 
 	syncStorageSet('settings', JSON.stringify(settings));
 };
@@ -294,24 +295,34 @@ const setSettings = (key, value) => {
 /**
  * Main settings handler function
  */
-const settingsControl = () => {
+
+const setEventListenersToSettings = () => {
+	const settingsItems = document.querySelectorAll('section.settings .item');
+
+	for (const item of settingsItems) {
+		item.addEventListener('click', () => {
+			settingsControl(item.dataset.setting);
+		})
+	}
+}
+
+const settingsControl = (keyName = undefined) => {
 	const settings = getSettings();
 	const settingsItems = document.querySelectorAll('section.settings .item');
 
-	[...settingsItems].forEach(item => {
-		const key = item.getAttribute('data-setting');
+	for (const item of settingsItems) {
+		const key = item.dataset.setting;
 		const value = settings[key];
 
 		// Toggle class on item and change switch style
 		removeClass(item, value ? 'off' : 'on');
 		addClass(item, value ? 'on' : 'off');
 
-		// Using addEventListener does not work properly for some reason
-		item.addEventListener('click', () => {
+		if (key === keyName) {
 			setSettings(key, !value);
 			settingsControl();
-		});
-	});
+		}
+	}
 
 	applySettings();
 };
@@ -328,17 +339,20 @@ const applySettings = () => {
 	cursorLastPosition = settings.cursorLastPosition;
 	// Toggle modes with Cmd/Ctrl + return key
 	returnKeyToggle = settings.returnKeyToggle;
+	// // Colored POWER MODE
+	// POWERMODE.colorful = settings.PowerModeColor;
+	// // Shake on POWER MODE
+	// POWERMODE.shake = settings.PowerModeShake;
 	// Enable POWER MODE
-	if (settings.enablePowerMode) {
-		textarea.addEventListener('input', POWERMODE, false);
-	} else {
-		textarea.removeEventListener('input', POWERMODE, false);
+	if (settings.enablePowerMode && !isPowerModeEventListenerSet) {
+		textarea.addEventListener('input', POWERMODE);
+		isPowerModeEventListenerSet = true;
 	}
 
-	// Colored POWER MODE
-	POWERMODE.colorful = settings.PowerModeColor;
-	// Shake on POWER MODE
-	POWERMODE.shake = settings.PowerModeShake;
+	if (!settings.enablePowerMode && isPowerModeEventListenerSet) {
+		textarea.removeEventListener('input', POWERMODE);
+		isPowerModeEventListenerSet = false;
+	}
 };
 
 /**
@@ -486,6 +500,7 @@ const initiate = () => {
 	/**
 	 * First things first: Set and apply settings
 	 */
+	setEventListenersToSettings();
 	setSettings();
 	settingsControl();
 
@@ -559,7 +574,7 @@ const initiate = () => {
 		closeModal(historySection);
 	}, false);
 	getHtmlElement('#settings').addEventListener('click', () => {
-		openModal(settingsSection, settingsControl);
+		openModal(settingsSection);
 	}, false);
 	getHtmlElement('#closeSettings').addEventListener('click', () => {
 		closeModal(settingsSection);
@@ -632,7 +647,6 @@ const initiate = () => {
 			for (const [key, value] of Object.entries(items)) {
 				localStorage.setItem(key, value);
 			}
-
 			initiate();
 		}
 	});
