@@ -43,11 +43,7 @@ const syncStorageSet = (name, value) => {
 	localStorage.setItem(name, value);
 	const item = {};
 	item[name] = value;
-	browser.storage.sync.set(item).then(() => {
-		if (browser.runtime.error) {
-			console.error('Runtime Error.');
-		}
-	});
+	browser.storage.sync.set(item);
 };
 
 /**
@@ -128,7 +124,7 @@ const save = (saveRevHist = 1) => {
 		syncStorageSet('rawText', text);
 		rawText = text;
 		if (saveHistory && saveRevHist) {
-			syncStorageSet('lastEdited', (new Date()));
+			syncStorageSet('lastEdited', (new Date()).toString());
 			setHistory();
 		}
 	}
@@ -560,8 +556,18 @@ const initiate = async () => {
 	/**
 	 * Last edited: _______
 	 */
-	setInterval(() => {
-		getHtmlElement('#lastEdited').innerHTML = `Last edited: ${format(Date.parse(localStorage.getItem('lastEdited')))}`;
+	let lastEdited = localStorage.getItem('lastEdited');
+	if (lastEdited === '[object Object]') {
+		const history = getHistory();
+		const actualLastEdited = history.length > 0 ? history[0].date : 0;
+		syncStorageSet('lastEdited', actualLastEdited)
+	}
+	setInterval(async () => {
+		let lastEdited = localStorage.getItem('lastEdited');
+		lastEdited == 0 ? undefined : lastEdited;
+		getHtmlElement('#lastEdited').innerHTML = lastEdited ?
+			`Last edited: ${format(new Date(lastEdited))}` : 
+			`Last edited: Never`;
 	}, 1000);
 
 	/**
