@@ -304,7 +304,7 @@ const setEventListenersToSettings = async () => {
 	const dateFormatForm = document.querySelector('section.settings form');
 	const dateFormatInput = dateFormatForm.querySelector('input[name="dateFormat"]');
 	const dateFormatSubmit = dateFormatForm.querySelector('input[type="submit"]');
-	dateFormatInput.value = (await browser.storage.sync.get()).dateFormat;
+	dateFormatInput.value = (await browser.storage.sync.get()).dateFormat || 'dd/mm/yyyy - HH:MM:ss';
 
 	dateFormatForm.addEventListener('submit', async event => {
 		event.preventDefault();
