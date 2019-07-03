@@ -261,6 +261,42 @@ section.settings
                 margin-top 10px
                 margin-right 20px
 
+        &.dateFormat
+            cursor default 
+
+            a
+                color white
+                font-weight bold
+                text-decoration none
+
+                &:hover
+                    text-decoration underline
+            
+            form
+                margin 5px -10px
+
+            input
+                margin 10px
+                background none
+                border 1px solid white
+                padding 5px 10px
+                font-size 16px
+                font-family 'Fira Mono'
+                color white
+                outline none
+
+                &[type='text']
+                    width 300px
+                &[type='submit']
+                    cursor pointer
+                    &.saved
+                        border-color green
+
+                &:hover,
+                &:active,
+                &:focus
+                    outline none
+
         .switch
             height 30px
             width 30px

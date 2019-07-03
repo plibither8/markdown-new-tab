@@ -1,6 +1,7 @@
 import './styl/index.styl';
 
 import showdown from 'showdown';
+import dateformat from 'dateformat';
 import {format} from 'timeago.js';
 
 /**
@@ -202,7 +203,6 @@ const populateHistoryHtml = () => {
 
 	history.forEach((item, id) => {
 		const parsedDate = new Date(Date.parse(item.date));
-		const formattedDate = `${(parsedDate.toDateString()).slice(4)}, ${(parsedDate.toTimeString()).slice(0, 8)}`;
 		const textBase64 = btoa(unescape(encodeURIComponent(item.text))); // Save rawtext as base64
 
 		listElements +=
@@ -210,7 +210,7 @@ const populateHistoryHtml = () => {
 				<div class='label flex'>
 					<div>
 						<p class='id'>#${length - id}</p>
-						<p class='date'>${formattedDate}</p>
+						<p class='date'>${parsedDate.toLocaleString()}</p>
 					</div>
 					<div class='noselect flex'>
 						<div class='button'>
@@ -296,19 +296,34 @@ const setSettings = (key, value) => {
  * Main settings handler function
  */
 
-const setEventListenersToSettings = () => {
-	const settingsItems = document.querySelectorAll('section.settings .item');
+const setEventListenersToSettings = async () => {
+	const settingsItems = document.querySelectorAll('section.settings .item:not(.dateFormat)');
 
 	for (const item of settingsItems) {
 		item.addEventListener('click', () => {
 			settingsControl(item.dataset.setting);
 		});
 	}
+
+	const dateFormatForm = document.querySelector('section.settings form');
+	const dateFormatInput = dateFormatForm.querySelector('input[name="dateFormat"]');
+	const dateFormatSubmit = dateFormatForm.querySelector('input[type="submit"]');
+	dateFormatInput.value = (await browser.storage.sync.get()).dateFormat;
+
+	dateFormatForm.addEventListener('submit', async event => {
+		event.preventDefault();
+		const {value} = dateFormatInput;
+		await browser.storage.sync.set({dateFormat: value.trim()});
+		dateFormatSubmit.classList.add('saved');
+		setTimeout(() => {
+			dateFormatSubmit.classList.remove('saved');
+		}, 500);
+	})
 };
 
 const settingsControl = (keyName = undefined) => {
 	const settings = getSettings();
-	const settingsItems = document.querySelectorAll('section.settings .item');
+	const settingsItems = document.querySelectorAll('section.settings .item:not(.dateFormat)');
 
 	for (const item of settingsItems) {
 		const key = item.dataset.setting;
@@ -474,19 +489,16 @@ const dragModal = name => {
 /**
  * Simple time-display function for the bottom bar
  */
-const timeDisplay = () => {
+const timeDisplay = async () => {
 	const timeEl = getHtmlElement('#time');
+	let dateFormatText = (await browser.storage.sync.get()).dateFormat;
+	if (!dateFormatText || dateFormatText === '') {
+		dateFormatText = 'dd/mm/yyyy - HH:MM:ss';
+	}
+
 	setInterval(() => {
-		const today = new Date();
-
-		const day = today.getDate() < 10 ? '0' + today.getDate() : today.getDate();
-		const month = (today.getMonth() + 1) < 10 ? '0' + (today.getMonth() + 1) : (today.getMonth() + 1);
-		const year = today.getFullYear() < 10 ? '0' + today.getFullYear() : today.getFullYear();
-		const hour = today.getHours() < 10 ? '0' + today.getHours() : today.getHours();
-		const minute = today.getMinutes() < 10 ? '0' + today.getMinutes() : today.getMinutes();
-		const seconds = today.getSeconds() < 10 ? '0' + today.getSeconds() : today.getSeconds();
-
-		const output = `${day}/${month}/${year} - ${hour}:${minute}:${seconds}`;
+		const now = new Date();
+		const output = dateformat(now, dateFormatText);
 		timeEl.innerHTML = output;
 	}, 1000);
 };
@@ -494,13 +506,13 @@ const timeDisplay = () => {
 /**
  * Main initiator function
  */
-const initiate = () => {
+const initiate = async () => {
 	rawText = localStorage.getItem('rawText');
 
 	/**
 	 * First things first: Set and apply settings
 	 */
-	setEventListenersToSettings();
+	await setEventListenersToSettings();
 	setSettings();
 	settingsControl();
 
@@ -543,7 +555,7 @@ const initiate = () => {
 	dragModal('settings');
 
 	// Initiate time display in bottom bar
-	timeDisplay();
+	await timeDisplay();
 
 	/**
 	 * Last edited: _______
@@ -642,13 +654,13 @@ const initiate = () => {
 	/**
 	 * Browser Sync
 	 */
-	browser.storage.sync.get().then(items => {
+	browser.storage.sync.get().then(async items => {
 		if (!browser.runtime.error) {
 			for (const [key, value] of Object.entries(items)) {
 				localStorage.setItem(key, value);
 			}
 
-			initiate();
+			await initiate();
 		}
 	});
 })();

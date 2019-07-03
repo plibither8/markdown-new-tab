@@ -75,6 +75,17 @@
                 .switch.flex
                     .box
 
+            .item.dateFormat.flex(data-setting='dateFormat')
+
+                .main.flex
+                    label Date Format
+                    p Customise date/time format to be displayed on the bottom of the window. Refer to 
+                        a(href='https://github.com/felixge/node-dateformat#mask-options') this table
+                        | &nbsp;to see how to properly format (refresh page to see the changes)
+                    form.flex
+                        input(type='text' name='dateFormat' placeholder='dd/mm/yyyy - HH:MM:ss')
+                        input(type='submit' name='submit' value='Save')
+
             //- .item.flex(data-setting='PowerModeColor')
 
             //-     .main.flex
