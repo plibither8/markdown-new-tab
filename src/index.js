@@ -302,9 +302,9 @@ const setEventListenersToSettings = () => {
 	for (const item of settingsItems) {
 		item.addEventListener('click', () => {
 			settingsControl(item.dataset.setting);
-		})
+		});
 	}
-}
+};
 
 const settingsControl = (keyName = undefined) => {
 	const settings = getSettings();
@@ -647,6 +647,7 @@ const initiate = () => {
 			for (const [key, value] of Object.entries(items)) {
 				localStorage.setItem(key, value);
 			}
+
 			initiate();
 		}
 	});
