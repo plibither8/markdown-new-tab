@@ -314,7 +314,7 @@ const setEventListenersToSettings = async () => {
 		setTimeout(() => {
 			dateFormatSubmit.classList.remove('saved');
 		}, 500);
-	})
+	});
 };
 
 const settingsControl = (keyName = undefined) => {
@@ -556,18 +556,19 @@ const initiate = async () => {
 	/**
 	 * Last edited: _______
 	 */
-	let lastEdited = localStorage.getItem('lastEdited');
+	const lastEdited = localStorage.getItem('lastEdited');
 	if (lastEdited === '[object Object]') {
 		const history = getHistory();
 		const actualLastEdited = history.length > 0 ? history[0].date : 0;
-		syncStorageSet('lastEdited', actualLastEdited)
+		syncStorageSet('lastEdited', actualLastEdited);
 	}
+
 	setInterval(async () => {
 		let lastEdited = localStorage.getItem('lastEdited');
-		lastEdited == 0 ? undefined : lastEdited;
+		lastEdited = Number(lastEdited) === 0 ? undefined : lastEdited;
 		getHtmlElement('#lastEdited').innerHTML = lastEdited ?
-			`Last edited: ${format(new Date(lastEdited))}` : 
-			`Last edited: Never`;
+			`Last edited: ${format(new Date(lastEdited))}` :
+			'Last edited: Never';
 	}, 1000);
 
 	/**
