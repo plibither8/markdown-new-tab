@@ -3,13 +3,14 @@
   "scripts": {
     "lint": "xo",
     "lint-fix": "xo --fix",
+    "clean": "rimraf dist",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch",
     "watch:firefox": "web-ext run --source-dir=dist",
     "version": "dot-json dist/manifest.json version $VER",
     "release:amo": "cd dist && web-ext-submit --api-key=\"$WEB_EXT_API_KEY\" --api-secret=\"$WEB_EXT_API_SECRET\"",
     "release:cws": "cd dist && webstore upload --auto-publish",
-    "release": "VER=$(daily-version) npm-run-all build version release:amo create-git-tag",
+    "release": "VER=$(daily-version) npm-run-all clean build version release:amo create-git-tag",
     "create-git-tag": "git tag $VER -m $VER && git push origin $VER"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "npm-run-all": "^4.1.5",
     "pug": "^2.0.4",
     "pug-loader": "^2.4.0",
+    "rimraf": "^2.6.3",
     "size-plugin": "^1.1.2",
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
