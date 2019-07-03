@@ -21,7 +21,7 @@
 
 ## About
 
-Markdown New Tab is a replacement for the default Google Chrome new tab page. Refer to [this brilliant cheat sheat](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) to get familiar with the markdown syntax.
+Markdown New Tab is a replacement for the default Google Chrome new tab page. Refer to [this brilliant guide](https://github.github.com/gfm/) to get familiar with the markdown syntax.
 
 ### Features
 
