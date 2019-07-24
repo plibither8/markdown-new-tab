@@ -82,8 +82,17 @@
                     p Customise date/time format to be displayed on the bottom of the window. Refer to 
                         a(href='https://github.com/felixge/node-dateformat#mask-options') this table
                         | &nbsp;to see how to properly format (refresh page to see the changes)
-                    form.flex
+                    form
                         input(type='text' name='dateFormat' placeholder='dd/mm/yyyy - HH:MM:ss')
+                        input(type='submit' name='submit' value='Save')
+
+            .item.customCss.flex(data-setting='customCss')
+
+                .main.flex
+                    label Custom CSS
+                    p Add custom CSS that will override current page styles
+                    form
+                        textarea(name='dateFormat' placeholder='Custom CSS' rows=5)
                         input(type='submit' name='submit' value='Save')
 
             //- .item.flex(data-setting='PowerModeColor')

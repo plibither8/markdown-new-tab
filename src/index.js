@@ -2,7 +2,10 @@ import './styl/index.styl';
 
 import showdown from 'showdown';
 import dateformat from 'dateformat';
+import indentTextarea from 'indent-textarea';
 import {format} from 'timeago.js';
+
+indentTextarea.watch('.customCss textarea');
 
 /**
  * Define helper functions
@@ -301,7 +304,7 @@ const setEventListenersToSettings = async () => {
 		});
 	}
 
-	const dateFormatForm = document.querySelector('section.settings form');
+	const dateFormatForm = document.querySelector('section.settings .dateFormat form');
 	const dateFormatInput = dateFormatForm.querySelector('input[name="dateFormat"]');
 	const dateFormatSubmit = dateFormatForm.querySelector('input[type="submit"]');
 	dateFormatInput.value = (await browser.storage.sync.get()).dateFormat || 'dd/mm/yyyy - HH:MM:ss';
@@ -315,6 +318,21 @@ const setEventListenersToSettings = async () => {
 			dateFormatSubmit.classList.remove('saved');
 		}, 500);
 	});
+
+	const customCssForm = document.querySelector('section.settings .customCss form');
+	const customCssTextarea = customCssForm.querySelector('textarea');
+	const customCssSubmit = customCssForm.querySelector('input');
+	customCssTextarea.value = (await browser.storage.sync.get()).customCss || '';
+
+	customCssForm.addEventListener('submit', async event => {
+		event.preventDefault();
+		const {value} = customCssTextarea;
+		await browser.storage.sync.set({customCss: value.trim()});
+		customCssSubmit.classList.add('saved');
+		setTimeout(() => {
+			customCssSubmit.classList.remove('saved');
+		}, 500);
+	})
 };
 
 const settingsControl = (keyName = undefined) => {
@@ -503,6 +521,14 @@ const timeDisplay = async () => {
  * Main initiator function
  */
 const initiate = async () => {
+	const {customCss = ''} = await browser.storage.sync.get();
+
+	if (customCss.trim().length > 0) {
+		const style = document.createElement('style');
+		style.innerHTML = customCss;
+		document.head.append(style);
+	}
+
 	rawText = localStorage.getItem('rawText');
 
 	/**

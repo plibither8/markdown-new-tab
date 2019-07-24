@@ -261,7 +261,8 @@ section.settings
                 margin-top 10px
                 margin-right 20px
 
-        &.dateFormat
+        &.dateFormat,
+        &.customCss
             cursor default 
 
             a
@@ -274,6 +275,7 @@ section.settings
             
             form
                 margin 5px -10px
+                width 100%
 
             input
                 margin 10px
@@ -296,6 +298,25 @@ section.settings
                 &:active,
                 &:focus
                     outline none
+
+            textarea
+                display block
+                width 100%
+                font-family SFMono-Regular, Consolas, 'Liberation Mono', Menlo, Courier, monospace
+                line-height 1.5
+                resize vertical
+                -moz-tab-size 4 !important
+                tab-size 4 !important
+                box-sizing border-box
+                margin-top 5px
+                margin-left 10px
+                background black
+                border 1px solid white
+                box-shadow none
+                color white
+                padding 5px
+                font-size 16px
+                margin-bottom 5px
 
         .switch
             height 30px
