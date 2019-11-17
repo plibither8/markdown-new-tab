@@ -1,0 +1,12 @@
+{
+	"name": "mdnt",
+	"version": 2,
+	"github": {
+		"enabled": true,
+		"silent": true
+	},
+	"builds": [{
+		"src": "package.json",
+		"use": "@now/static-build"
+	}]
+}
