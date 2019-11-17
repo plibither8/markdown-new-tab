@@ -42,11 +42,13 @@ const removeClass = (el, className) => {
 /**
  * Wrapper: localStorage.setItem
  */
-const syncStorageSet = (name, value) => {
-	localStorage.setItem(name, value);
+const syncStorageSet = async (name, value) => {
+	await localStorage.setItem(name, value);
 	const item = {};
 	item[name] = value;
-	browser.storage.sync.set(item);
+	if (browser.storage) {
+		await browser.storage.sync.set(item);
+	}
 };
 
 /**
@@ -307,12 +309,12 @@ const setEventListenersToSettings = async () => {
 	const dateFormatForm = document.querySelector('section.settings .dateFormat form');
 	const dateFormatInput = dateFormatForm.querySelector('input[name="dateFormat"]');
 	const dateFormatSubmit = dateFormatForm.querySelector('input[type="submit"]');
-	dateFormatInput.value = (await browser.storage.sync.get()).dateFormat || 'dd/mm/yyyy - HH:MM:ss';
+	dateFormatInput.value = localStorage.getItem('dateFormat') || 'dd/mm/yyyy - HH:MM:ss';
 
 	dateFormatForm.addEventListener('submit', async event => {
 		event.preventDefault();
 		const {value} = dateFormatInput;
-		await browser.storage.sync.set({dateFormat: value.trim()});
+		await syncStorageSet('dateFormat', value.trim());
 		dateFormatSubmit.classList.add('saved');
 		setTimeout(() => {
 			dateFormatSubmit.classList.remove('saved');
@@ -322,17 +324,17 @@ const setEventListenersToSettings = async () => {
 	const customCssForm = document.querySelector('section.settings .customCss form');
 	const customCssTextarea = customCssForm.querySelector('textarea');
 	const customCssSubmit = customCssForm.querySelector('input');
-	customCssTextarea.value = (await browser.storage.sync.get()).customCss || '';
+	customCssTextarea.value = localStorage.getItem('customCss') || '';
 
 	customCssForm.addEventListener('submit', async event => {
 		event.preventDefault();
 		const {value} = customCssTextarea;
-		await browser.storage.sync.set({customCss: value.trim()});
+		await syncStorageSet('customCss', value.trim());
 		customCssSubmit.classList.add('saved');
 		setTimeout(() => {
 			customCssSubmit.classList.remove('saved');
 		}, 500);
-	})
+	});
 };
 
 const settingsControl = (keyName = undefined) => {
@@ -505,7 +507,7 @@ const dragModal = name => {
  */
 const timeDisplay = async () => {
 	const timeEl = getHtmlElement('#time');
-	let dateFormatText = (await browser.storage.sync.get()).dateFormat;
+	let dateFormatText = localStorage.getItem('dateFormat');
 	if (!dateFormatText || dateFormatText === '') {
 		dateFormatText = 'dd/mm/yyyy - HH:MM:ss';
 	}
@@ -521,7 +523,7 @@ const timeDisplay = async () => {
  * Main initiator function
  */
 const initiate = async () => {
-	const {customCss = ''} = await browser.storage.sync.get();
+	const customCss = localStorage.getItem('customCss') || '';
 
 	if (customCss.trim().length > 0) {
 		const style = document.createElement('style');
@@ -683,17 +685,20 @@ const initiate = async () => {
 /**
  * INITIATE!!!
  */
-(() => {
+(async () => {
 	/**
 	 * Browser Sync
 	 */
-	browser.storage.sync.get().then(async items => {
-		if (!browser.runtime.error) {
-			for (const [key, value] of Object.entries(items)) {
-				localStorage.setItem(key, value);
-			}
 
-			await initiate();
-		}
-	});
+	if (browser.storage) {
+		browser.storage.sync.get().then(items => {
+			if (!browser.runtime.error) {
+				for (const [key, value] of Object.entries(items)) {
+					localStorage.setItem(key, value);
+				}
+			}
+		});
+	}
+
+	await initiate();
 })();
