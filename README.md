@@ -11,6 +11,10 @@
 
 > Take down notes 🗒️, save reminders ⏰, paste links 🔗, create checklists ☑️ or tables, all using markdown... directly in your 'New Tab' page! Markdown New Tab is a replacement for the default 'New Tab' page on Google Chrome 🆕 🎉.
 
+<h2 align="center">
+  <a href="https://mdnt.mihir.ch">Preview it!</a>
+</h2>
+
 ![Demo GIF](/assets/demo.gif)
 
 ## Install
