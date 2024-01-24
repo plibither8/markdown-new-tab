@@ -88,6 +88,10 @@ Markdown New Tab was made by me during my study-breaks and free time. If you lik
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png)](https://www.buymeacoffee.com/plibither8)
 
+### Thanks
+
+* **Browserstack**: This project is tested with Browserstack
+
 ## License
 
 Copyright (c) Mihir Chaturvedi. All rights reserved.
